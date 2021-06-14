@@ -1,21 +1,131 @@
-# Introduction {#intro}
 
-You can label chapter and section titles using `{#label}` after them, e.g., we can reference Chapter \@ref(intro). If you do not manually label them, there will be automatic labels anyway, e.g., Chapter \@ref(methods).
+# Módulo I {#m1}
 
-Figures and tables with captions will be placed in `figure` and `table` environments, respectively.
+## Breve Histórico
 
-```{r nice-fig, fig.cap='Here is a nice figure!', out.width='80%', fig.asp=.75, fig.align='center'}
-par(mar = c(4, 4, .1, .1))
-plot(pressure, type = 'b', pch = 19)
+O **R** é uma linguagem e um ambiente para programação estatística que roda em diversas plataformas *NIX, no Windows e MacOS ([R-project.org](https://www.r-project.org)), podendo ser baixado e distribuído gratuitamente de acordo com a General Public License (GPL).
+
+A origem do nome próprio **R** remonta à linguagem e **S**, desenvolvida por John Chambers entre 1975 e 76 na Bell Labs (antiga AT&T e atual Lucent Technologies) – mesmo local de origem de importantes inovações na área de computação, como o sistema operacional UNIX, a linguagem de programação C, os transístores, dentre outras.
+
+Em contraponto à implementação comercial da linguagem S – o **S-PLUS**, Ross Ihaka e Robert Gentleman do departamento de Estatística de Auckland - Nova Zelândia criaram, em 1995, a linguagem R como uma alternativa livre e gratuita à S. O próprio nome R vem de um jogo com a linguagem S e as iniciais dos nomes dos autores, Ross e Robert.
+
+
+****
+
+## Instalação do **R**
+
+A instalação do ambiente R é fácil de ser realizada em qualquer sistema operacional. No windows, os passos são:
+
+* 1 Acesse o site https://www.r-project.org/.
+* 2 Clique em download R ou CRAN mirror.
+* 3 Escolha o repositório (Comprehensive R Archive Network - CRAN) de preferência.
+* 4 Clique em Download R for Windows.
+* 5 Clique em base.
+* 6 Baixe o executável de instalação, clicando em Download R X.X.X for Windows.
+* 7 Execute o arquivo baixado para a instalação do software.
+
+
+A janela default do R no Windows é bastante simplória. Pode-se observar que é dividida em uma janela maior, chamada de R GUI (R Graphical User Interface) – ou seja, a interface gráfica do R; e uma janela R Console. Nessa janela, tem-se uma descrição sobre a versão utilizada e algumas dicas sobre a linguagem. O sinal `>` indica a linha de comando ou prompt, que é onde digitam-se os comandos a serem rodados pelo interpretador. 
+
+![Interface Gráfica do R no Windows](fig/R_GUI.png)
+
+Aqui, cabe uma distinção entre a linguagem R e algumas outras linguagens de programação: a linguagem R é uma linguagem interpretada, ou seja, a execução do código ocorre juntamente com a análise do código, como se fosse _on-demand_. Digita-se o código, dá-se o comando de execução e imediatamente o interpretador reúne os comandos, os traduz para linguagem de máquina (ou linguagem de baixo nível) e transfere-os para o processador para execução. Outro exemplo de linguagem interpretada seria Python. 
+
+Nas linguagens compiladas, a análise de código ocorre em apenas uma fase – compilação – quando se analisa os dados e transforma-se o código-fonte em código-alvo. O código-alvo geralmente fica separado, em um arquivo executável, que será executado em um momento posterior. 
+
+### Instalação do **RStudio**
+
+Tendo em vista que a interface gráfica original do R é bastante modesta, existem diversos IDE ( _Integrated_ _Development_ _Environment_ )  que reúnem várias ferramentas de apoio à programação e análise de dados, com o objetivo de facilitar a vida de seus usuários. O IDE mais utilizado para  a linguagem R é o RStudio
+
+Veja, a seguir, passos para instalação do RStudio no Windows:
+
+* 1. Acesse o site https://www.rstudio.com/.
+* 2. Clique em DOWNLOAD.
+* 3. Escolha a versão FREE e clique em DOWNLOAD RStudio for Windows.
+
+Como se vê, a interface gráfica do RStudio é mais "amigável" do que a _default_ do R. A janela está dividida em três partes: uma para _Console_, outra para _Environment, History e Connections_ e mais outra para _Files, Plots, Packages, Help e Viewer_. Ao painel de _Environment, History e Connections_ podem ser acrescentadas outras abas, dependendo do tipo de trabalho que você está desenvolvendo no R, como por exemplo a aba _Presentations_, quando se está produzindo slides ou a aba _Build_ quando está construindo e testando um pacote. Os nomes em geral são autoexplicativos. 
+
+![Interface do RStudio](fig/RStudio_layout1.png)
+
+****
+
+## Funcionalidades Básicas do R e do RStudio
+
+### R como Calculadora
+
+A forma mais básica de se utilizar o R é como uma calculadora. As operações aritméticas básicas são executadas com os seguintes operadores no R:
+
+Operador | Operação
+---------|---------
++        | adição
+-        | subtração
+*        | multiplicação
+/        | divisão
+^ ou **  | exponenciação
+x%%y     | módulo resto
+x%/%y    | quociente inteiro
+
+Vejamos alguns exemplos, digitando em nosso console, logo ao lado de `>`, as seguintes operações:
+
+```{r}
+2+1
+4-2
+2*3
+3/3
+3^2
+3**2
+5%%2
+5%/%2
 ```
 
-Reference a figure by its code chunk label with the `fig:` prefix, e.g., see Figure \@ref(fig:nice-fig). Similarly, you can reference tables generated from `knitr::kable()`, e.g., see Table \@ref(tab:nice-tab).
+Perceba que ao lado de todas as repostas, apareceu `[1]`. Os _colchetes_ e o número _1_ dentro indicam que aquela linha mostra o objeto resultante a começar pelo primeiro elemento deste. Isso acontece porque o R, sempre que possível, trabalha de forma vetorizada. O valor dentro de `[ ]` indica a posição dentro do vetor de resposta do número logo a direita (resultado). Como em cada operação, a resposta é única, todos os valores estavam localizados na primeira posição do nosso _vetor_ de resposta. 
 
-```{r nice-tab, tidy=FALSE}
-knitr::kable(
-  head(iris, 20), caption = 'Here is a nice table!',
-  booktabs = TRUE
-)
+
+Isso vai ser bastante útil quando você quiser, por exemplo, aplicar uma operação matemática ou qualquer outra transformação a todas as entradas de uma coluna em uma tabela e imprimir o resultado no console. No _output_, o R vai quebrar o resultado em algumas linhas e esses números entre colchetes nos ajudarão a identificar a qual posição do vetor de resposta pertence o primeiro número de cada linha na saída impressa no console.
+
+Teste por exemplo:
+
+```{r}
+1:100 * 2
 ```
 
-You can write citations, too. For example, we are using the **bookdown** package [@R-bookdown] in this sample book, which was built on top of R Markdown and **knitr** [@xie2015].
+
+No nosso exemplo, o R optou por quebrar a multiplicação dos 100 números em grupos de 17 números nas 4 primeiras linhas e num grupo de 15 valores na última. Na primeira linha de nosso _output_, **2** é o elemento na posição 1 (`[1]`) do vetor de resposta; na segunda linha, o número **36** é elemento se refere à posição 18 (`[18]`) do vetor de resposta e assim por diante, até a última linha que começa no elemento de posição 86.
+
+
+### Operadores Lógicos
+
+Você pode, ainda, realizar comparações lógicas no R. Abaixo estão relacionados alguns dos operadores lógicos que serão importantes nos primeiros módulos do curso. Outros serão apresentados nos demais módulos:
+
+Operador | Operação
+---------|---------
+>        | maior que
+>=       | maior ou igual a
+<        | menor que
+<=       | menor ou igual a
+==       | igual a
+!=       | diferente de
+x&y      | x E y
+x\|y     | x OU y
+Vejamos alguns exemplos:
+
+```{r}
+2 > 1
+1009 >= 1009
+3 < 0.7
+3 <= 3.0001
+7 == 5
+4353.789 == 4353.7891
+8 != 13
+4353.789 != 4353.7891
+2 == 2 & 7 != 5
+(2 == 2) & (7 != 5)
+(2 == 3) | (7 <= 5)
+4353.789 != 4353.7891 | 7 >= 0.7
+```
+
+
+Note que as respostas são, nestes exemplos, sempre um vetor lógico: `TRUE` ou `FALSE`.
+
+
+

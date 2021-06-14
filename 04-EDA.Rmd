@@ -1,0 +1,378 @@
+# Módulo IV
+
+## Manipulação de dados com `dplyr`
+
+Nesta seção, trataremos do pacote `dplyr`, que é um dos pacotes mais importantes da coleção _tidyverse_. Ele traz uma "gramática" específica de manipulação de dados, provendo um conjunto de funções que ajudam a resolver os desafios mais comuns na manipulação de dados. O objetivo é que você se familiarize com as funções do pacote `dplyr`; com as tarefas que elas executam; e veja exemplos de como aplicá-las a *data.frames*.
+
+<!-- Além das funções básicas de **dplyr**, teremos um enfoque na utilização do pacote **dplyr** para trabalhar com bancos de dados relacionais **SQL** em conjunto com os pacotes **DBI** e **dbplyr**. -->
+
+<!-- Serão utilizados os conteúdos dos *vignettes* dos pacotes **dplyr** e **dbplyr** disponíveis no próprio **R** e em http://dplyr.tidyverse.org/articles/dplyr.html e http://dbplyr.tidyverse.org/articles/dbplyr.html. -->
+
+
+Conforme os próprios autores do pacote apontam, quando trabalhamos com dados, nós precisamos:
+
+* Descobrir o que desejamos fazer;
+
+* Descrever essas tarefas na forma de um programa de computador;
+
+* Executar o programa.
+
+O pacote `dplyr` torna estes passos mais rápidos e fáceis de executar, pois:
+
+- ao invés de disponibilizar uma imensidão de funções, igual temos no *R base* e outros pacotes, ele restringe nossas opções e com isso nos ajuda a reciocinar de forma mais direta sobre o que desejamos e podemos fazer com os dados;
+
+- provém "verbos" (ou funções) mais simples, ou seja, funções que correspondem às tarefas mais comuns de manipulação de dados, ajudando-nos assim a traduzir pensamentos em código;
+
+- utiliza backends (códigos de final de processo, ou seja, mais próximos ao usuário) eficientes, de modo que gastamos menos tempo esperando pelo computador.
+
+O pacote  `dplyr` proporciona uma função para cada "verbo" considerado importante em manipulação de dados:
+
+- `filter()` para selecionar "casos" baseados em seus valores;
+
+- `arrange()` para reordenar os "casos";
+
+- `select()` e rename() para selecionar variáveis baseadas em seus nomes;
+
+- `mutate()` e `transmute()` para adicionar novas variáveis que são funções de variáveis já existentes nos dados;
+
+- `summarise()` ou `summarize()` para condensar multiplos valores em um único;
+
+- `group_by()` embora não seja considerado um dos "verbos", serve para agruparmos os dados em torno de uma ou mais variáveis. As funções consideradas "verbos" podem ser utilizadas antes ou após o agrupamentodos dados.
+
+Veremos agora alguns exemplos de aplicação destas funções.
+
+Vamos utilizar o mesmo dataset sobre produção madeireira que utilizamos na seção de leitura e exportação de dados. Ele possui 100.000 mil linhas e 17 colunas.
+
+```{r, message=FALSE}
+library(dplyr)
+dim(tb_ibama)
+```
+
+
+
+Note que pelo _print_ que temos novamente um _tibble_, que é uma forma moderna de data.frame implementada pelo pessoal do **tidyverse** . Este formato é particularmente útil para grandes *datasets* porque só é impresso na tela as primeiras linhas e diversos resumos/informações sobre nossas variáveis. Para converter data.frames em tibbles, usamos `as_tibble()`.
+
+
+### Filtrando linhas com `filter()`
+
+`filter()` permite fazer um _subset_ das linhas de um tibble/dataframe. Como todos os verbos simples de `dplyr`, o primeiro argumento será um _tibble_ (ou data.frame). O segundo argumento e os subsequentes se referem a variáveis dentro do data.frame, em que se selecionam as linhas onde a expressão é verdadeira (TRUE).
+
+Vamos selecionar todos as linhas em que o tipo de destino das madeiras é o consumidor final, na cidade de Brasil Novo:
+
+```{r}
+filter(tb_ibama, TIPO_DESTINO == "CONSUMIDOR_FINAL", MUNICÍPIO_DESTINATÁRIO == "Brasil Novo")
+```
+
+**DICA:** No `base R`, isso seria equivalente ao código: `tb_ibama[tb_ibama$TIPO_DESTINO == "CONSUMIDOR_FINAL" & tb_ibama$MUNICÌPIO_DESTINATÁRIO == "Brasil Novo", ]`.
+
+
+### Ordenando linhas com `arrange()`
+
+`arrange()` funciona de modo semelhante a _filter_, mas ao invés de filtrar e selecionar linhas, ele apenas as reordena de acordo com alguma condição que passamos. Essa função recebe um data.frame e um conjunto de _column names_ pelo qual vai ordenar. Se você fornecer mais de um nome de coluna, cada coluna adicional passada será usada como critério de desempate.
+
+```{r}
+arrange(tb_ibama, UF_DESTINATÁRIO, MUNICÍPIO_DESTINATÁRIO, VOLUME)
+```
+
+Se quiser ordenar de forma decrescente, utilize a função `desc(nome_da_coluna)` dentro de `arrange()`. Isso seria particularmente interessante se você quisesse ordenar os dados na coluna final do maior volume para o maior.
+
+
+### Selecionando colunas com `select()`
+
+Geralmente trabalhamos com grandes _datasets_ com muitas colunas, mas somente algumas poucas colunas serão de nosso interesse. `select()` nos permite rapidamente focar num subconjunto dos dados. O melhor é que podemos utilizar operações - que normalmente só funcionam com as posições das colunas - direto nos nomes das variáveis.
+
+```{r}
+# Seleção por nome
+select(tb_ibama, UF_REMETENTE, MUNICÍPIO_REMETENTE, TIPO_DESTINO)
+# Selecionando todas as colunas num intervalo de colunas (inclusive)
+select(tb_ibama, UF_REMETENTE:TIPO_DESTINO)
+# Selecionando todas as clunas exceto aqueles em um intervalo (inclusive)
+select(tb_ibama, -(UF_REMETENTE:TIPO_DESTINO))
+```
+
+**DICA:** Existem _helper functions_ que podemos usar dentro de `select()`. São funções que lembram o funcionamento de uma _regular expression_ (conceito que veremos no Módulo \@ref(m3)) para identificarmos nomes de colunas que atendem a determinado critério. São muito úteis com grandes datasets: `starts_with()`, `ends_with()`, `matches()` e `contains()`.
+
+Vamos por exemplo selecionar todas as colunas que começam com UF:
+
+```{r}
+select(tb_ibama, starts_with("UF"))
+```
+
+`select()` pode ser usada inclusive para renomear variáveis:
+
+```{r}
+select(tb_ibama, MUN_REMETENTE = MUNICÍPIO_REMETENTE)
+```
+
+A nova variável será chamada *MUN_REMETENTE* e receberá toda a informação da original *MUNICÍPIO_REMETENTE*.
+
+No entanto, `select()` "abandona" todas as demais variáveis quando você faz uma renomeação. O melhor então é usar `rename()`:
+
+```{r}
+rename(tb_ibama, MUN_REMETENTE = MUNICÍPIO_REMETENTE)
+```
+
+
+### Adicionando novas colunas com `mutate()`
+
+Além de selecionar conjuntos de colunas existentes, é geralmente útil adicionar novas colunas que são funções de colunas já presentes no tibble/dataframe. Veja um exemplo com `mutate()`, onde queremos calcular o preço por unidade de volume:
+
+```{r}
+mutate(tb_ibama,
+  preco_unidade = PRECO_TOTAL / VOLUME,
+)
+```
+
+``mutate()`` nos permite ainda nos referir a colunas que acabamos de criar no mesmo comando. Vamos salvar esta alteração em um novo _tibble_, chamado `tb_ibama2`
+
+```{r}
+tb_ibama2 <- mutate(tb_ibama,
+  preco_unidade = PRECO_TOTAL / VOLUME,
+  preco_unidade_vezes_1000 = preco_unidade * 1000
+)
+```
+
+Se só nos interessarem as novas variáveis, usaríamos *transmute()*:
+```{r}
+transmute(tb_ibama,
+  preco_unidade = PRECO_TOTAL / VOLUME,
+  preco_unidade_vezes_1000 = preco_unidade * 1000
+)
+```
+
+
+### Modificando entradas com `mutate()` ou `transmute()` + `case_when()`
+
+`case_when()` é uma função do pacote `dplyr` que nos permite modificar as variáveis a partir de uma sequência de condições que devem ser respeitadas.
+
+```{sh, eval=FALSE}
+SE CONDIÇÃO1 VERDADEIRA ~ FAÇA TAL COISA;
+SENÃO ~ FAÇA OUTRA COISA
+```
+
+Ela substitui as estruturas condicionais nativas do R (função `ifelse()`) e é inspirada na declaração equivalente em _SQL_ `CASE WHEN`. Os argumentos da função `case_when()` obedecem à seguinte estrutura: `operação condicional ~ novo valor`. No lado esquerdo do `~`, você tem a comparação a ser feita. No lado direito, temos o novo valor a ser atribuído caso o resultado da comparação seja `TRUE`. Você pode tratar, inclusive, mais de uma condição, desde que parta do caso mais específico para o mais geral.
+
+```{r, eval=FALSE}
+case_when(
+  condição1 ~ "novo_valor1",
+  condição2 ~ "novo_valor2",
+  condição3 ~ "novo_valor3",
+  TRUE ~ "valor para os demais casos não atendidos pelas condições acima"
+)
+```
+
+
+Geralmente, no contexto de análise de dados com `dplyr`, utilizamos `case_when()` dentro de uma função `mutate()` ou `transmute` (que traz a apenas a nova coluna criada), uma vez que pretendemos alterar as entradas de uma coluna, alterando, portanto, a própria coluna.
+
+No _tibble_ **`tb_ibama2`**, amos criar uma nova coluna de caracteres chamada `nivel_preco`, em que classificaremos um preco em: `alto` se `preco_unidade > 500`; `baixo` se `preco_unidade < 300` ou `razoavel` nos demais casos:
+
+```{r}
+transmute(tb_ibama2,
+       nivel_preco =
+         case_when(
+           preco_unidade > 500 ~ "alto",
+           preco_unidade < 300 ~ "baixo",
+           TRUE ~ "razoável"
+         ))
+```
+
+**DICA:** Se os valores das colunas recém criadas forem exibidos em notação exponencial (científica), execute o código abaixo para forçar a exibição das casas decimais em modo convencional e depois imprima novamente as colunas.
+
+```{r, eval=FALSE}
+# scipen é uma espécie de penalização para a utilização de notação em valores exponenciais
+# valores positivos penalizam a exibição em notação exponencial
+# valores negativos penalizam a exibição em notação fixa/regular
+options(scipen=999)
+```
+
+### Sumarizando valores com `summarise()`
+
+O último "verbo" de `dplyr` é `summarise()` (ou `summarize`). Ele colapsa um tibble/dataframe em uma única linha.
+
+```{r}
+summarise(tb_ibama2,
+  preco_total_medio = mean(PRECO_TOTAL, na.rm = TRUE)
+)
+```
+
+**DICA:** O parâmetro `na.rm = TRUE` dentro da função `mean()` serve para que esta desconsidere os valores falatantes (`NA`) ao calcular a média. Do contrário, na existência de _missing values_ `NA`, a função sempre retornará `NA`. Isso também vale para outras funções matemáticas de funcionamento vetorizado, como `sum()`, por exemplo.
+
+Dependendo do seu objetivo, pode ser mais útil utilizar o "verbo" `group_by()` que veremos mais a frente. Com ele poderemos calcular o preço médio por categoria, i.e. por Estado, Município, etc.
+
+
+## Estrutura do `dplyr`
+
+Note que a sintaxe e funcionamento de todos os verbos de `dplyr` apresentados até aqui são bem similares:
+
+- o primeiro argumento é um tibble/dataframe;
+
+- os argumentos subsequentes descrevem o que fazer com os dados. Podemos nos referir às colunas do tibble/dataframe diretamente sem a necessidade de usar `$` ou indexação por `[]`.
+
+- o resultado é um novo tibble/dataframe.
+
+Juntas, essas propriedades facilitam encadear múltiplos passos simples para alcançar um resultado complexo. O restante do que `dplyr` faz, vem de aplicar as 5 funções que vimos até aqui a diferentes tipos de dados. Ao invpes de trabalharmos com dados desagregados, vamos passar a trabalhar agora com dados agrupados por uma ou mais variáveis.
+
+### Operações agrupadas
+
+Os verbos de `dplyr` tornam-se ainda mais poderosos quando os aplicamos a grupos de observações dentro de um conjunto de dados. Fazemos isso com a função `group_by()`. Ela "quebra" o dataset em grupos específicos de linhas. No início, não vemos qualquer alteração. É como se elas ficassem em segundo plano. No entanto, ao aplicarmos algum dos verbos principais no dataset "alterado" por `group_by`, eles automaticamente serão aplicados por grupo ou "by group".
+
+O uso de agrupamento afeta o resultado dos verbos principais da seguinte forma:
+
+- `select()` agrupado é o mesmo que não agrupado, exceto pelo fato que as variáveis de agrupamento são sempre preservadas.
+
+- `arrange()` agrupado é mesmo que não agrupado, a não ser que usemos `.by_group = TRUE`, caso em que ordena primeiro pelas variáveis de agrupamento;
+
+- `mutate()` e `filter()` são bastante úteis em conjunto com window functions (como `rank()` ou `min(x) == x`) (Ver vignette de "window-functions" do `dplyr`);
+
+- `summarise()` calcula o sumário para cada grupo.
+
+No exemplo a seguir, nós separamos o dataset por `PRODUTO`, contando o número de registros para cada um dos produtos (`count = n()`), computando a preço médio por produto (`preco_medio_produto = mean(preco_unidade, na.rm = TRUE`)).
+
+```{r}
+by_produto <- group_by(tb_ibama2, PRODUTO)
+preco_medio_produto <- summarise(
+  by_produto,
+  count = n(),
+  pmp = mean(preco_unidade, na.rm = TRUE)
+)
+```
+
+
+Note que `summarise()` é normalmente utilizada com **aggregate functions**, as quais recebem um vetor de valores e retornam um único número. Há muito exemplos úteis do *base R* que podem ser utilizados, como `min()`, `max()`, `mean()`, `sum()`, `sd()`, `median()`, etc. `dplyr` fornece mais algumas outras bem úteis:
+
+- `n()`: número de observações no grupo atual;
+- `n_distinct(x)`: número de valores únicos em x;
+- `first(x)`, `last(x)` e `nth(x, n)` funcionam de forma similar a `x[1]`, `x[length(x)]` e `x[n]`, mas nos dão maior controle sobre resultado caso algum valor seja _missing_.
+
+Veja um exemplo em que usamos estas funções para encontrar o número de produtos distintos que seguem para cada possível destino e quantidade total de produtos que o Município recebe:
+
+```{r}
+destinos <- group_by(tb_ibama2, MUNICÍPIO_DESTINATÁRIO)
+summarise(destinos,
+  n_produtos_distintos = n_distinct(PRODUTO),
+  qte_total_produtos = n()
+)
+```
+
+Quando agrupamos mais de uma variável, cada `summarise()` que executamos, elimina um nível do agrupamento.
+
+Exemplo:
+
+```{r}
+by_uf_mun_dest <- group_by(tb_ibama2, UF_DESTINATÁRIO, MUNICÍPIO_DESTINATÁRIO)
+(qte_produtos_por_mun_dest   <- summarise(by_uf_mun_dest, qte = n()))
+# notar que da descrição "Groups:" do tibble, ou seja, o número de variáveis de agrupamento vai diminuindo.
+(qte_produtos_por_uf_dest   <- summarise(qte_produtos_por_mun_dest, qte = sum(qte)))
+```
+
+<!-- ISSO SE CHAMA PROGRSSIVELY ROLLING UP SUMMARIES IN A DATA FRAME -->
+
+<!-- COMO MEDIAS PONDERADAS E VARIANCIAS EH COMPLICADO FAZER ISSO PQ EH UM EQUIVOCO -->
+
+
+### Cuidados com os nomes de variáveis
+
+Uma das melhores características do pacote `dplyr` é que podemos nos referir as variáveis de um _tibble_ ou dataframe como se fossem variáveis regulares (aquelas que estão no _Global Environment_). No entanto, a sintaxe de referência para nomes de colunas escondem algumas diferenças entre os verbos. Por exemplo, um nome ou valor de coluna passado para `select()` não tem o mesmo significado do que teria em `mutate()`.
+
+Veja formas equivalentes do ponto de vista de **dplyr**:
+
+```{r}
+select(tb_ibama2, TIPO_GF)
+select(tb_ibama2, 1)
+```
+
+Se houver uma variável no _Global Environment_ com o mesmo nome de uma coluna de nosso tibble/dataframe, o `dplyr` dará prioridade à variável que está no _tibble_.
+
+```{r}
+TIPO_GF <- 5
+select(tb_ibama2, TIPO_GF)
+```
+
+Esse comportamento somente se aplica aos nomes "crus" e às chamadas de seleção como `select(tibble, var1, var2, var3)` ou `var1:var3`. Em todos os outros casos, os nomes das colunas dos tibbles são preteridas às "variáveis soltas" no _Global Environment_.
+
+```{r}
+var1 <- "UF"
+select(tb_ibama2, starts_with(var1))
+```
+
+Note que neste útlimo caso, o `dplyr` olhou para o conteúdo da variável `var1` e não para o nome literal da variável.
+
+## Usando o Pipe `%>%`
+
+**dplyr** é funcional no sentido de que os chamados às funções não tem efeitos colaterais. Ou seja, você sempre precisa salvar seus resultados. Isso faz com que não tenhámos um código tão elegante, especialmente quando vamos fazer várias operações, uma de cada vez:
+
+```{r, eval=FALSE}
+# agrupando por UF_DESTINATÁRIO, MUNICÍPIO_DESTINATÁRIO
+nivel1 <- group_by(tb_ibama2, UF_DESTINATÁRIO, MUNICÍPIO_DESTINATÁRIO)
+# selecionando apenas colunas PRODUTO, PRECO_TOTAL, preco_unidade
+nivel2 <- select(nivel1, PRODUTO, PRECO_TOTAL, preco_unidade)
+# calculando quantidade total de produtos e valor total por MUNICÍPIO_DESTINATÁRIO
+nivel3 <- summarise(nivel2,
+  qte_total_produtos = n(),
+  valor_total = sum(PRECO_TOTAL, na.rm = TRUE)
+)
+# filtrando Municípios com quantidade de produtos acima de 100 OU
+# ... valor total acima de R$ 2.000.000,00
+nivel4 <- filter(nivel3, qte_total_produtos > 100 | valor_total > 2000000)
+```
+
+
+Note que há muitos resultados intermediários que vamos salvando, quando na verdade só nos interessaria o final. Para resolver isso poderíamos ir chamando uma função dentro da outra:
+
+```{r, eval=FALSE}
+filter(
+  summarise(
+    select(
+      group_by(tb_ibama2, UF_DESTINATÁRIO, MUNICÍPIO_DESTINATÁRIO),
+      PRODUTO, PRECO_TOTAL, preco_unidade
+    ),
+    qte_total_produtos = n(),
+    valor_total = sum(PRECO_TOTAL, na.rm = TRUE)
+  ),
+  qte_total_produtos > 100 | valor_total > 2000000
+)
+```
+
+Embora resolva o problema de salvar os objetos intermediários, esta abordagem é difícil de se ler os passos porque a ordem das operações se dá dentro para fora. Então, os argumentos acabam ficando longe da função propriamente dita. Para dar uma solução elegante ao problema, **dplyr** utiliza o operador pipe `%>%` do pacote `magritrr`. `x %>% f(y)` equivale a `f(x, y)`. Então, podemos utilizar esse operador para reescrever múltiplas operações que podemos ler da esquerda para direita e de cima para baixo. É como se cada linha de código funcionasse como um departamento destinto de uma empresa. A produção começa na primeira linha. Terminada as alterações nesse primeiro departamento, o produto (dados) ainda inacabado é "jogado" para o departamento de baixo por meio do _pipe_, onde a produção continua. De lá segue para o próximo de partamento, e assim segue até que todas as alterações nos dados tenham sido realizadas.
+
+```{r}
+tb_ibama2 %>%
+  group_by(UF_DESTINATÁRIO, MUNICÍPIO_DESTINATÁRIO) %>%
+  select(PRODUTO, PRECO_TOTAL, preco_unidade) %>%
+  summarise(
+    qte_total_produtos = n(),
+    valor_total = sum(PRECO_TOTAL, na.rm = TRUE)
+  ) %>%
+  filter(qte_total_produtos > 100 | valor_total > 2000000)
+```
+
+**DICA:** Note que o nome do _tibble_ ou dataframe só precisa ser informado uma única vez logo ao início do processo.
+
+***
+
+## Referências da seção
+
+- Wickham H.; François, R.; Henry, L.; Müller K. (2019). _dplyr: A Grammar of Data Manipulation_. R package version 0.8.1. URL [https://CRAN.R-project.org/package=dplyr](https://CRAN.R-project.org/package=dplyr).
+
+- Wickham H.; François, R.; Henry, L.; Müller K. (2020). _dplyr vignette: Introduction_. URL [http://dplyr.tidyverse.org](http://dplyr.tidyverse.org).
+
+- Wickham, H.; Grolemund, G. (2016). _R for Data Science: Import, Tidy, Transform, Visualize, and Model Data_. O'Reilly Media. december 2016. 522 pages. Disponível em: [https://www.r4ds.co.nz](https://www.r4ds.co.nz).
+
+### Exercícios
+
+1) Importe a tabela selecionada contendo uma projeção do Censo Escolar Agregado por número de alunos por etapa de ensino para os anos de 2020 e 2021 [](https://xxxxxx).
+
+2) Qual é o número de alunos por série de ensino em 2019? Escreva uma nova tabela txt ou csv com esses dados.
+
+3) Agrupe os dados pelos UFs de SP, RJ e MG e salve uma tabela separada (txt ou csv) para cada um dos agrupamentos. **DICA:** Pesquise sobre como separar dataframes por grupos com dplyr e como indexar listas.
+<!-- https://dplyr.tidyverse.org/reference/group_split.html -->
+
+4) Identifique o estado com menor número de alunos projetado para 2020.
+
+5) Crie e salve uma nova tabela contendo o número de escolas por UF.
+
+
+***
+***
+
+
