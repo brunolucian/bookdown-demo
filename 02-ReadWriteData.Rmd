@@ -1,4 +1,4 @@
-# Módulo II
+# Módulo II  {#m2}
 
 ## Guardando seus códigos em um script
 
@@ -335,7 +335,7 @@ df1 <- head(iris, 10); df1
 Exemplo:
 
 ```{r,echo=FALSE}
-v2 <- c("R", "IPEA", "2020")
+v2 <- c("R", "CEPERJ", "2020")
 m1 <- matrix(runif(2^2), 2)
 minha_lista <- list(v2, head(iris, 5), m1)
 minha_lista
@@ -373,7 +373,7 @@ v1 <- c(1, 0.2, 0.3, 2, 2.8); v1
 **Vetor de caracteres ou _strings_:**
 
 ```{r}
-v2 <- c("R", "IPEA", "2020", "R", "IPEA", "2020"); v2
+v2 <- c("R", "CEPERJ", "2021", "R", "CEPERJ", "2021"); v2
 ```
 
 **DICA:** Note que as strings devem ser passadas `"entre aspas"`.
@@ -404,7 +404,7 @@ Há outras funções interessantes que possibilitam criar vetores:
 
 * `:`, exemplo: `1:100`, cria um vetor numérico composto pela sequência de 1 a 100;
 * `seq()`, exemplo: `seq(-10, -1)`, cria um vetor numérico composto pela sequência de -10 a -1;
-* `rep()`, exemplo: `rep("IPEA", 10)`, cria um vetor composto pela _string_ `"IPEA"` repetida 10 vezes.
+* `rep()`, exemplo: `rep("CEPERJ", 10)`, cria um vetor composto pela _string_ `"CEPERJ"` repetida 10 vezes.
 
 #### Como extrair elementos de um vetor
 
@@ -497,7 +497,7 @@ Vamos criar um dataframe de 3 colunas. Os argumentos principais são os vetores 
 # OBS: todos os vetores precisam ter o mesmo tamanho
 v6 <- 11:15
 v7 <- seq(0.3, 0.7, by=0.1)
-v8 <- rep("IPEA", 5)
+v8 <- rep("CEPERJ", 5)
 v9 <- rep(c(TRUE, FALSE), 5)
 df1 <- data.frame(v6, v7, v8, v9)
 df1

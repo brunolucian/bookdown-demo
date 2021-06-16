@@ -1,4 +1,6 @@
-# Relatórios e pesquisa reproduzível com `rmarkdown`
+# Módulo VI {#m6}
+
+## Relatórios e pesquisa reproduzível com `rmarkdown`
 
 
 ## Introdução
