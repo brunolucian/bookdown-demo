@@ -91,9 +91,9 @@ O símbolo `#` é utilizado para definir títulos. A cada `#` acrescentado, voc�
 Para redigir um parágrafo basta começar a escrever um texto qualquer. Para adicionar parágrafos basta pular uma linha, deixando um espaço em branco entre os parágrafos
 
 ```{rmarkdown}
-Este é o primeiro parágrafo do seu texto. Você pode escrever normalmente e ele 
+Este é o primeiro parágrafo do seu texto. Você pode escrever normalmente e ele
 aparecerá no seu relatório.
-Após pular uma linha, você começa um novo parágrafo. Acrescente as ideias que você 
+Após pular uma linha, você começa um novo parágrafo. Acrescente as ideias que você
 desejar neste segundo parágrafo
 ```
 
@@ -114,7 +114,7 @@ Você pode obter o mesmo efeito utilizando _underline_ no lugar dos asteriscos, 
 Notas de rodapé podem ser inseridas no testo utilizando o esquema `palavra^[Texto que irá para a nota de rodapé sobre a palavra.]`
 
 ```{rmarkdown}
-Nesse texto vamos inserir uma nota de rodapé sobre a palavra Estatística^[Estatística 
+Nesse texto vamos inserir uma nota de rodapé sobre a palavra Estatística^[Estatística
 é a disciplina que consiste na coleta, organização, análise e apresentação de dados.]
 ```
 
@@ -334,7 +334,7 @@ As principais opções de chunk são:
     - opções:
         - `TRUE` (_default_): exibe os códigos acima do _output_
         - `FALSE`: exibe apenas o _output_ gerado pelo _chunk_
-        
+
 * `eval`: especifica se o _chunk_ será executado ou não
     - opções:
         - `TRUE` (_default_): executa o _chunk_
@@ -342,14 +342,14 @@ As principais opções de chunk são:
 * `message` e `warning`: define se as mensagens e demais avisos gerados durante a excução do código
     - opções:
         - `TRUE` (_default_): exibe mensagens e avisos gerados durante a excução do _chunk_
-        - `FALSE`: suprime a exibição de mensagens e warnings (útil para suprimir mensagens de carregamento de pacotes) 
+        - `FALSE`: suprime a exibição de mensagens e warnings (útil para suprimir mensagens de carregamento de pacotes)
 * `fig.cap`: especifica uma descrição para a figura gerada no _chunk_
 * `fig.align`: define o alinhamento da figura gerada no _chunk_
     - opções:
         - `center` (_default_): alinhamento no centro do documento
         - `left`: alinhamento à esquerda
         - `right`: alinhamento à direita
-        
+
 * `fig.height` e `fig.width`: define a altura e a largura da figura em polegadas
         - _default_ é tamanho 7
 Se nada for especificado para uma determinada opção, as configurações _default_ são utlizadas na avaliação do código e exibição dos resultados.
@@ -360,7 +360,7 @@ library(dplyr)
 x <- 1:10
 x %>%
   sum()
-  
+
 ```
 ````
 
@@ -407,9 +407,9 @@ library(ggplot2)
 tb_ibama2 %>%
   ggplot()+
   geom_point(mapping=aes(x=VOLUME, y=PRECO_TOTAL, colour=TIPO_GF))+
-  labs(title="Título do gráfico", 
-       x = "Rótulo eixo x", 
-       y = "Rótulo eixo y", 
+  labs(title="Título do gráfico",
+       x = "Rótulo eixo x",
+       y = "Rótulo eixo y",
        colour = "Título da Legenda")+
   theme_bw()
 ```
@@ -455,9 +455,9 @@ library(ggplot2)
 tb_ibama2 %>%
   ggplot()+
   geom_point(mapping=aes(x=VOLUME, y=PRECO_TOTAL, colour=TIPO_GF))+
-  labs(title="Título do gráfico", 
-       x = "Rótulo eixo x", 
-       y = "Rótulo eixo y", 
+  labs(title="Título do gráfico",
+       x = "Rótulo eixo x",
+       y = "Rótulo eixo y",
        colour = "Título da Legenda")+
   theme_bw()
 ```

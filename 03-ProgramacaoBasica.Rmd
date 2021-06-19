@@ -1,0 +1,572 @@
+# Módulo III {#m3}
+
+## Controle de Fluxo
+
+Os controles de fluxo são operações definidas em todas as linguagens de programação, como por exemplo Python, C, C++, Java, Fortran, Pascal, etc. Como não podia deixar de ser, tais operações também estão definidas dentro da linguagem R.
+
+Cada linguagem de programação tem a sua própria sintaxe, isto é, sua própria regra de como essas operações devem ser usadas. Nesta aula será abordada a sintaxe e mais detalhes sobre alguns controles de fluxo para a linguagem R.
+
+## Estrutura Condicional IF-ELSE
+
+Uma instrução `if` permite que você execute código condicionalmente, ou seja, apenas uma parte do código será executada e *apenas se alguma condição for atendida*. E se parece com isso:
+
+```{r, eval=FALSE}
+
+if (condicao) {
+  #comandos caso condicao seja verdadeira (TRUE)
+} else {
+  #comandos caso condicao seja falsa (FALSE)
+}
+
+```
+
+ou simplesmente
+
+```{r, eval=FALSE}
+
+if (condicao) {
+  #comandos caso condicao seja verdadeira (TRUE)
+}
+
+```
+
+Essa instrução lógica funciona analisando cada condição. O par de parênteses seguidos do `if` tem que ter um `objeto` do tipo `"logical"`. Os comandos dentro do primeiro par de chaves serão executados caso o `objeto condicao` seja `TRUE`. Caso contrário, os comandos de dentro do par de chaves depois do `else` serão executados. O comando `else` é opcional, como foi mostrado anteriormente. No caso do `else` não aparecer, nada será executado caso o `objeto condicao` seja `FALSE`.
+
+
+### _Exemplos_
+
+O exemplo a seguir terá como resultado texto impresso na tela. O que será impresso depende do valor guardado na variável x. Se x receber o valor menor que 5,  um texto será impresso, caso contrário, outro texto aparecerá na tela.
+
+```{r}
+#Neste caso x recebe um valor entre 1 e 10
+x <- sample(1:10, 1)
+
+if( x < 5 ){
+   print(paste(x,"é menor que",5))  
+} else {
+   print(paste(x,"é maior ou igual a",5))   
+}
+
+```
+
+A função `print()` é responsável por imprimir na tela e a função `paste()` por concatenar textos e criar um único objeto do tipo `"character"`. Para mais detalhes digite no `console` do `R` o comando `help(print)` e `help(paste)`.
+
+Agora considere a seguinte sequência de comandos, qual o valor da variável y ao final desse código?
+
+```{r}
+
+x <- 3
+
+if (x > 7){
+   y <- 2**x 
+} else {
+   y <- 3**x
+}
+
+```
+A resposta para esse problema é 27. O controle de fluxo `if/else` será usado na maioria das vezes dentro de funções ou iteradores, como será visto adiante.
+É possível encadear diversos `if() else` em sequência:
+
+```{r}
+
+numero <- 5
+ 
+if (numero == 1) {
+  print("o número é igual a 1")
+} else if (numero == 2) {
+  print("o número é igual a 2")
+} else {
+  print("o número não é igual nem a 1 nem a 2")
+}
+
+
+
+```
+## Iteradores
+
+A iteração ajuda quando você precisa fazer a mesma coisa com várias entradas, como por exemplo: repetir a mesma operação em colunas diferentes ou em conjuntos de dados diferentes. 
+Existem ferramentas como loops `for` e `while`, que são um ótimo lugar para começar porque tornam a iteração muito explícita, então é óbvio o que está acontecendo. 
+
+### FOR Loops
+
+No entanto, os loops `for` podem ser bastante prolixos e requerem um pouco de código que é duplicado para cada loop `for` o que não é algo prático de dar manutenção. 
+
+Imagine que temos um _dataframe_ simples como:
+
+```{r}
+df <- tibble(
+  a = sample(1:10000, 10),
+  b = sample(1:10000, 10),
+  c = sample(1:10000, 10),
+  d = sample(1:10000, 10)
+)
+```
+
+Para computar a mediana de cada coluna. Deve ser feito o uso da função `median``
+
+```{r}
+median(df$a)
+median(df$b)
+median(df$c)
+median(df$d)
+```
+
+Mas isso quebra nossa regra de ouro: nunca copie e cole mais de duas vezes. Em vez disso, poderíamos usar um loop for:
+
+```{r}
+medianas <- vector("double", ncol(df))  # 1. saída (output)
+
+for (i in seq_along(df)) {            # 2. sequência (sequence)
+
+    medianas[i] <- median(df[[i]])      # 3. corpo (body)
+
+}
+
+medianas
+
+```
+Todo `for` loop tem três componentes: 
+
+1 - A saída: `saida <- vector("double", length (x))`. Antes de iniciar o loop, você deve sempre alocar espaço suficiente para a saída. Isso é muito importante para a eficiência: se você aumentar o loop for a cada iteração usando `c()` (por exemplo), seu loop for será muito lento.
+
+Uma maneira geral de criar um vetor vazio de determinado comprimento é a função `vector()`. Que possui dois argumentos: o tipo do vetor (“logical”, “integer”, “double”, “character”, etc) e o comprimento do vetor.
+
+2 - A sequência: `i` em `seq_along(df)`. Isso determina sobre o que fazer o loop: cada execução do loop for atribuirá `i` a um valor diferente de `seq_along(df)`.
+
+Você pode não ter visto `seq_along()` antes. É uma versão segura do familiar `1:length(l)`, com uma diferença importante: se você tem um vetor de comprimento zero, `seq_along()` faz a coisa certa:
+
+```{r}
+y <- vector("double", 0)
+seq_along(y)
+#> integer(0)
+1:length(y)
+#> [1] 1 0
+```
+
+Claro que não vai ser criado um vetor de comprimento zero deliberadamente, mas é fácil criá-los acidentalmente. Se você usar `1:length(x)` em vez de `seq_along(x)`, é provável que receba uma mensagem de erro confusa.
+
+3 - O corpo: `saida[i] <- median(df[[i]])`. Este é o código que faz o trabalho. É executado repetidamente, cada vez com um valor diferente para `i`. A primeira iteração executará a `saída[1] <- median(df[[1]])`, a segunda executará a `saída[2] <- median(df[[2]])` e assim por diante.
+
+Isso é tudo que existe para o loop `for`! Agora é momento para praticar!
+
+### Variações em FOR Loops
+
+Depois de ter o loop for básico em seu currículo, existem algumas variações das quais você deve estar ciente.
+
+Existem quatro variações sobre o tema básico do loop for:
+
+* Modificar um objeto existente, em vez de criar um novo objeto.
+
+* Loop sobre nomes ou valores, em vez de índices.
+
+* Tratamento de saídas de comprimento desconhecido.
+
+* Manipulação de sequências de comprimento desconhecido. 
+
+#### Modificando um objeto existente
+
+Às vezes, você deseja usar um loop `for` para modificar um objeto existente. Por exemplo: 
+
+```{r}
+df <- tibble(
+  a = sample(1:10000, 10),
+  b = sample(1:10000, 10),
+  c = sample(1:10000, 10),
+  d = sample(1:10000, 10)
+)
+
+
+df$a <- scale(df$a)
+df$b <- scale(df$b)
+df$c <- scale(df$c)
+df$d <- scale(df$d)
+```
+Para resolver isso com um loop `for`, novamente pensamos sobre os três componentes:
+
+1 - Saída: já temos a saída - é o mesmo que a entrada!
+
+2 - Sequência: podemos pensar em um quadro de dados como uma lista de colunas, então podemos iterar sobre cada coluna com `seq_along(df)`.
+
+3 - Corpo: aplicar `scale()`
+
+```{r}
+for (i in seq_along(df)) {
+  df[[i]] <- scale(df[[i]])
+}
+```
+
+Normalmente, você modificará uma lista ou quadro de dados com esse tipo de loop, então lembre-se de usar `[[`, não `[`.
+
+#### For loops sobre nomes e valores ao invés de índices
+
+Existem três maneiras básicas de fazer um loop em um vetor. Até agora eu mostrei o mais geral: looping sobre os índices numéricos com `for(i in seq_along(xs))` e extrair o valor com `x[[i]]`. Existem duas outras formas:
+
+Faça um loop sobre os elementos: `for(x in xs)`. Isso é mais útil se você se preocupa apenas com os efeitos colaterais, como plotar ou salvar um arquivo, porque é difícil salvar a saída de forma eficiente.
+
+Faça um loop sobre os nomes: `for(nm in names(xs))`. Isso fornece um nome, que você pode usar para acessar o valor com `x[[nm]]`. Isso é útil se você deseja usar o nome em um título de plotagem ou um nome de arquivo. Se você estiver criando uma saída nomeada, certifique-se de nomear o vetor de resultados da seguinte forma:
+
+```{r, eval=FALSE}
+results <- vector("list", length(x))
+names(results) <- names(x)
+```
+
+A iteração sobre os índices numéricos é a forma mais geral, porque dada a posição, você pode extrair o nome e o valor:
+
+```{r, eval=FALSE}
+for (i in seq_along(x)) {
+  name <- names(x)[[i]]
+  value <- x[[i]]
+}
+```
+
+#### For loop com comprimento de saída desconhecido
+
+Às vezes, você pode não saber o tamanho da saída. Por exemplo, imagine que você deseja simular alguns vetores aleatórios de comprimentos aleatórios. Você pode ficar tentado a resolver esse problema aumentando progressivamente o vetor:
+
+```{r}
+means <- c(0, 1, 2)
+
+output <- double()
+
+for (i in seq_along(means)) {
+  n <- sample(100, 1)
+  output <- c(output, rnorm(n, means[[i]]))
+}
+
+str(output)
+```
+Mas isso não é muito eficiente porque em cada iteração, R tem que copiar todos os dados das iterações anteriores.
+
+Uma solução melhor é salvar os resultados em uma lista e, em seguida, combiná-los em um único vetor após a conclusão do loop:
+
+```{r}
+out <- vector("list", length(means))
+
+for (i in seq_along(means)) {
+  n <- sample(100, 1)
+  out[[i]] <- rnorm(n, means[[i]])
+}
+
+str(out)
+
+str(unlist(out))
+```
+#### For loops com comprimento de sequência desconhecido ou While
+
+Algumas vezes, você nem sabe por quanto tempo a sequência de entrada deve ser executada. Isso é comum ao fazer simulações. Por exemplo, você pode querer fazer um loop até obter três caras seguidas. Você não pode fazer esse tipo de iteração com o loop `for`. Em vez disso, você pode usar um loop `while`. Um loop `while` é mais simples do que loop `for` porque tem apenas dois componentes, uma condição e um corpo:
+
+```{r, eval=FALSE}
+
+while (condition) { #condição
+ 
+   # corpo (body)
+
+}
+
+```
+
+Um loop `while` também é mais geral do que um loop `for`, porque você pode reescrever qualquer loop for como um loop `while`, mas não pode reescrever todo loop `while` como um loop `for`:
+
+```{r, eval=FALSE}
+
+for (i in seq_along(x)) {
+  # body
+}
+
+# Equivalent to
+i <- 1
+while (i <= length(x)) {
+  # body
+  i <- i + 1 
+}
+
+```
+ 
+Aqui está como poderíamos usar um loop `while` para descobrir quantas tentativas são necessárias para obter três caras em uma linha:
+
+```{r}
+
+flips <- 0
+nheads <- 0
+
+while (nheads < 3) {
+  if (sample(c("T", "H"), 1) == "H") {
+    nheads <- nheads + 1
+  } else {
+    nheads <- 0
+  }
+  flips <- flips + 1
+}
+flips
+```
+loops `while` foi mencionado apenas brevemente, porque é pouco usado. Eles são usados com mais frequência no contexto de simulação. No entanto, é bom saber que eles existem para que você esteja preparado para problemas em que o número de iterações não é conhecido com antecedência.
+
+
+## Funções (Functions)
+
+Uma das melhores maneiras de melhorar sua performance como cientista/analista de dados é escrever funções. As funções permitem automatizar tarefas comuns de uma forma mais poderosa e geral do que copiar e colar. Escrever uma função tem três grandes vantagens sobre o uso de copiar e colar:
+
+1 - Você pode dar a uma função um nome elucidativo que torne seu código mais fácil de entender.
+
+2 - Conforme os requisitos mudam, você só precisa atualizar o código em um lugar, em vez de muitos.
+
+3 - Você elimina a chance de cometer erros incidentais ao copiar e colar (ou seja, atualizar o nome de uma variável em um lugar, mas não em outro).
+
+Escrever boas funções é uma jornada para a vida toda. O objetivo deste módulo não é ensinar todos os detalhes esotéricos das funções, mas dar a você alguns direcionamentos pragmáticos que você pode aplicar imediatamente.
+
+Além disso, algumas sugestões sobre como definir o estilo de seu código. Um bom estilo de código é como a pontuação correta. Você pode gerenciar sem ele, mas com certeza ele torna as coisas mais fáceis de ler! Tal como acontece com os estilos de pontuação, existem muitas variações possíveis. 
+
+## Quando eu devo escrever uma função?
+
+Você deve considerar escrever uma função sempre que copiou e colou um bloco de código mais de duas vezes (ou seja, agora você tem três cópias do mesmo código).
+
+```{r}
+3 > 5
+7 > 9
+19 > 10
+
+maior <- function(a,b){
+   if(a>b){
+       return(a)
+   }else{
+       return(b)
+   }
+} 
+
+```
+Depois da função definida e compilada podemos chamá-la sem ter que digitar todo o código novamente. Veja o que acontece quando a função é chamada no `console` do R.
+
+```{r}
+maior(3,2)
+```
+
+```{r}
+maior(-1,4)
+```
+
+```{r}
+maior(10,10)
+```
+Uma segunda função pode ser criada com o intuito de receber como argumento um número natural `n` e retorna um `array` com os `n` primeiros múltiplos de 3.
+
+```{r}
+multiplos_3 <- function(n){
+  vet <- NULL
+  for(i in 1:n){
+    vet[i] <- 3*i
+  }
+  return(vet)
+}
+multiplos_3(10)
+```
+```{r}
+multiplos_3(15)
+```
+
+
+
+Existem três etapas principais para criar uma nova função:
+
+1 - Você precisa escolher um nome para a função. Que faça sentido para o que a função executa.
+
+2 - Você lista as entradas, ou argumentos, para a função dentro da função. Por exemplo uma chamada poderia ser a `function (x, y, z)`.
+
+3 - Você coloca o código que desenvolveu no corpo da função, um {bloco que segue imediatamente a função (...).
+
+Outra vantagem das funções é que, se nossos requisitos mudarem, só precisaremos fazer a mudança em um lugar.
+
+Criar funções é uma parte importante do princípio _“do not repeat yourself” (or DRY)_. Quanto mais repetição você tiver em seu código, mais lugares você precisará se lembrar de atualizar quando as coisas mudarem (e sempre mudam!) E maior será a probabilidade de você criar bugs com o tempo.
+
+## Funções são para humanos e computadores
+
+É importante lembrar que as funções não são apenas para o computador, mas também para humanos. `R` não se importa com o que sua função é chamada, ou quais comentários ela contém, mas estes são importantes para leitores humanos. 
+
+O nome de uma função é importante. Idealmente, o nome da sua função será curto, mas evocará claramente o que a função faz. Isso é difícil! Mas é melhor ser claro do que curto, pois o preenchimento automático do `RStudio` facilita a digitação de nomes longos.
+
+Geralmente, os nomes das funções devem ser verbos e os argumentos devem ser substantivos. Existem algumas exceções: substantivos estão ok se a função calcula um substantivo muito conhecido (ou seja, `mean()` é melhor do que `compute_mean()`), ou acessar alguma propriedade de um objeto (ou seja, `coef()` é melhor do que `get_coefficients()`). Um bom sinal de que um substantivo pode ser uma escolha melhor é se você estiver usando um verbo muito amplo como "obter", "calcular" ou "determinar". Use seu bom senso e não tenha medo de renomear uma função se você descobrir um nome melhor mais tarde.
+
+
+```{r, eval=FALSE}
+# Muito curto
+f()
+
+# Não descritivo
+my_awesome_function()
+
+# Longo mas claro
+impute_missing()
+collapse_years()
+```
+
+Se o nome da sua função for composto por várias palavras, recomendo usar “snake_case”, onde cada palavra minúscula é separada por um _underscore_. "camelCase" é uma alternativa popular. Escolha uma e seja consistente. O `R` em si não é muito consistente, mas não há nada que você possa fazer sobre isso. Certifique-se de não cair na mesma armadilha, tornando seu código o mais consistente possível.
+
+```{r, eval=FALSE}
+# Não faça isso!
+col_mins <- function(x, y) {}
+rowMaxes <- function(y, x) {}
+```
+
+Se você tem uma família de funções que fazem coisas semelhantes, certifique-se de que eles tenham nomes e argumentos consistentes. Use um prefixo comum para indicar que eles estão conectados. Isso é melhor do que um sufixo comum porque o preenchimento automático permite que você digite o prefixo e veja todos os membros da família.
+
+```{r, eval=FALSE}
+
+# Faça isso
+input_select()
+input_checkbox()
+input_text()
+
+# Escolha não fazer isso
+select_input()
+checkbox_input()
+text_input()
+
+```
+
+
+## Argumentos de função
+
+Os argumentos para uma função normalmente se enquadram em dois conjuntos amplos: um conjunto fornece os dados para calcular e o outro fornece argumentos que controlam os detalhes do cálculo. Por exemplo:
+
+* Em `log()`, os dados são `x`, e o detalhe é a base do logaritmo.
+
+* Em `mean()`, os dados são `x` e os detalhes são quantos dados cortar das extremidades (trim) e como lidar com os valores ausentes (na.rm).
+
+Em `str_c()` você pode fornecer qualquer número de strings para `...`, e os detalhes da concatenação são controlados por `sep` e `collapse`.
+
+Geralmente, os argumentos de dados devem vir primeiro. Os argumentos de detalhes devem ir no final e geralmente devem ter valores padrão. Você especifica um valor padrão da mesma maneira que chama uma função com um argumento nomeado.
+
+## Nomeando variáveis
+
+Os nomes dos argumentos também são importantes. O `R` mais uma vez não se importa, mas os leitores de seu código (incluindo você-futuro!) sim. Geralmente você deve preferir nomes mais longos e descritivos, mas há um punhado de nomes muito comuns e muito curtos. Vale a pena memorizar estes:
+
+* `x, y, z`: vetores.
+* `w`: um vetor de pesos.
+* `df`: um quadro de dados.
+* `i, j`: índices numéricos (normalmente linhas e colunas).
+* `n`: comprimento ou número de linhas.
+* `p`: número de colunas.
+
+Caso contrário, considere combinar nomes de argumentos em funções `R` existentes. Por exemplo, use `na.rm` para determinar se os valores ausentes devem ser removidos.
+
+##  Os famosos três pontinhos (...)
+
+Muitas funções em R recebem um número arbitrário de entradas:
+
+```{r}
+sum(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+
+stringr::str_c("a", "b", "c", "d", "e", "f")
+
+```
+
+Como funcionam essas funções? Eles contam com um argumento especial: `...` e este argumento especial captura qualquer número de argumentos que não são correspondidos de outra forma.
+
+Isto é útil porque você pode enviá-los `...` para outra função. Este é um resumo útil se sua função envolve principalmente outra função. Por exemplo, normalmente crio essas funções auxiliares que envolvem str_c (): 
+
+```{r}
+
+commas <- function(...) stringr::str_c(..., collapse = ", ")
+
+commas(letters[1:10])
+
+rule <- function(..., pad = "-") {
+  title <- paste0(...)
+  width <- getOption("width") - nchar(title) - 5
+  cat(title, " ", stringr::str_dup(pad, width), "\n", sep = "")
+}
+rule("Important output")
+
+
+```
+Aqui `...` permite-me encaminhar quaisquer argumentos que eu não quero tratar para `str_c()`. É uma técnica muito conveniente. Mas tem um preço: qualquer argumento incorreto não gerará um erro. Isso facilita que erros de digitação passem despercebidos.
+
+## Ambiente (Environment)
+
+O último componente de uma função é seu ambiente. Isso não é algo que você precisa entender profundamente quando começa a escrever funções. No entanto, é importante saber um pouco sobre os ambientes porque eles são cruciais para o funcionamento das funções. O ambiente de uma função controla como R encontra o valor associado a um nome. Por exemplo, use esta função:
+
+```{r}
+soma_xy <- function(x) {
+  x + y
+} 
+```
+
+
+Em muitas linguagens de programação, isso seria um erro, porque `y` não é definido dentro da função. Em `R`, este é um código válido porque `R` usa regras chamadas escopo léxico para encontrar o valor associado a um nome. Uma vez que `y` não está definido dentro da função, `R` irá procurar no ambiente onde a função foi definida:
+
+```{r}
+y <- 100
+soma_xy(10)
+
+y <- 1000
+soma_xy(10)
+
+```
+
+Este comportamento parece uma receita para _bugs_ e de fato, você deve evitar criar funções como esta, mas em geral não causa muitos problemas (especialmente se você reiniciar o `R` regularmente).
+
+## Exercicios
+
+1. Para cada item a seguir implemente a função que se pede. Atenção: não use a função min já pronta no R.
+
+    a. Implemente uma função que recebe como argumento dois números reais e retorna o menor entre eles.
+    b. Implemente uma função que recebe como argumento três números reais e retorna o menor entre eles.
+    c. Implemente uma função que recebe como argumento um array de números e retorna o menor número dentro do array.
+
+
+2. Implemente uma função que recebe como argumento o tamanho de cada lado de um triângulo e retorna um objeto do tipo character com o texto informando se o triângulo é equilátero, isósceles ou escaleno. Antes de fazer o exercício pense:
+
+    a. Quantos argumentos a sua função vai receber?
+    
+    b. Quais são os valores aceitáveis para esses argumentos?
+    
+    c. Qual o tipo de objeto que a sua função deve retornar?
+
+3. Implemente uma função que recebe como argumento um array de números reais e retorna a quantidade de elementos positivos nesse array. Não se esqueça de inciar todas as variáveis locais usadas em sua função. Depois que a sua função estiver pronta invente vetores para o argumento de forma a verificar se a função está funcionando como o esperado. Por exemplo, use a função para contar o número de elementos positivos em `v = c(1.0,3.2,-2.1,10.6,0.0,-1.7,-0.5)`.
+
+4. Implemente uma função que recebe como argumento um array de numerics denominado v e um número real a. Essa função retorna o número de elementos em v menores que a.
+
+5. Para cada item a seguir faça o que se pede. Não se esqueça de fazer as verificações necessárias para garantir que o usuário passe os argumentos de forma correta.
+
+    a. Implemente uma função que recebe como argumento as variáveis n e m e retorna um array que guarda os n primeiros múltiplos de m.
+    b. Implemente uma função que recebe como argumento as variáveis m e k e retorna um array com os múltiplos de m menores que k.
+    c. Implemente uma função que recebe como argumento as variáveis m e k e retorna a quantidade de múltiplos de m menores que k.
+    d. Classifique cada variável que aparece dentro das funções implementadas nesse exercício como “variável local” ou “argumento de entrada” da função. Todas as variáveis locais foram iniciadas dentro do corpo da função?
+    
+
+6. Para cada item a seguir faça o que se pede. Não se esqueça de fazer as verificações necessárias para garantir que o usuário passe os argumentos de forma correta.
+
+    a. Implemente uma função que recebe como entrada um número natural n e retorna uma matriz n×n tal que as posições em linhas pares recebem o número 2 e as posições em linhas ímpares o número 1.
+    
+    b. Implemente uma função que recebe como entrada um número natural n e retorna uma matriz n×n tal que a coluna i dessa matriz guarda o valor i. Por exemplo, a primeira coluna deve ser preenchida com 1, a segunda com 2 e assim por diante, até a n-ésima coluna que deve ser preenchida com o número n.
+    
+    c. Implemente uma função que recebe como entrada um número natural n e retorna uma matriz diagonal n×n tal que na diagonal principal aparecem os valores de 1 até n. Por exemplo, a posição (1,1) deve ser preenchido com 1, a posição (2,2) com 2 e assim por diante. As demais posições devem ser nulas, uma vez que a matriz de saída é diagonal.
+
+7. Para cada item a seguir faça o que se pede. Não se esqueça de fazer as verificações necessárias para garantir que o usuário passe os argumentos de forma correta.
+
+    a. Implemente uma função que recebe como entrada um vetor de número reais v e retorna uma matriz diagonal com os elementos de v guardados na diagonal principal.
+
+    b. Implemente uma função que recebe como entrada um vetor de número reais v e retorna uma matriz quadrada cujas colunas são iguais ao vetor v.
+
+    c. Implemente uma função que recebe como entrada um vetor de número reais v e retorna uma matriz quadrada cujas linhas são iguais ao vetor v.
+
+
+8. Para cada item a seguir faça o que se pede. Não se esqueça de fazer as verificações necessárias para garantir que o usuário passe os argumentos de forma correta.
+
+    a. Implemente uma função que recebe como argumento o valor inicial x0 e retorna os 10 primeiros termos de uma p.a. cuja razão é 3.
+
+    b. Implemente uma função que recebe como argumento o valor inicial x0, a razão r e retorna um vetor com os 10 primeiros termos dessa p.a.
+
+    c. Implemente uma função que recebe como argumentos o valor inicial x0, a razão r, um inteiro n e retorna um vetor com os n primeiros termos de uma p.a. Nomeie essa função de pa.
+
+    d. Implemente uma função que recebe como argumento o valor inicial x0, a razão r, um inteiro n e retorna a soma dos n primeiros termos de uma p.a. Nomeie essa função de soma_pa. Obs: Você deve chamar no corpo da função soma_pa a função pa implementada no item anterior.
+
+    e. Classifique cada variável que aparece dentro das funções soma_pa e pa como “variável local” ou “argumento de entrada” da função. Todas as variáveis locais foram iniciadas dentro do corpo da função?
+
+
+9. Implemente uma função que:
+
+    a. recebe como argumento a variável n e retorna um vetor com os n primeiros termos da sequência de Fibonacci.
+
+    b. recebe como argumento a variável k e retorna um vetor com os todos os termos da sequência de Fibonacci menores que k.
+
+    c. recebe como argumento a variável k e retorna o número de termos da sequência de Fibonacci menores que k

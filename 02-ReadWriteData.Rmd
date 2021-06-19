@@ -1,13 +1,21 @@
 # Módulo II  {#m2}
 
+De acordo com o dicionário _Oxford languages_, _script_ é um “conjunto de instruções para que uma função seja executada em determinado aplicativo”. Ou seja, trabalhar com _scripts_ é uma forma de facilitar a execução das atividades propostas no R.
+
+Script da aula do Módulo II abaixo.
+```{r, echo=FALSE}
+xfun::embed_file('scripts/Aula2.R')
+```
+
+
 ## Guardando seus códigos em um script
 
 No RStudio, você pode acrescentar um pequeno painel, que facilitará ainda mais o seu trabalho. Trata-se do _source pane_, um painel onde você pode criar scripts para armazenar várias linhas de código, de modo a excutá-las de uma única vez ou linha-a-linha.  Caso queira guardar as contas e comparações lógicas que fez anteriormente em um arquivo de modo a poder executá-las posteriormente, você poderá fazê-lo por meio de um script. Na janela de script, você consegue manter uma trilha de todos os comandos utilizados.
 
-Isto é importante, pois otimiza o uso do R ao permitir rodar os mesmos códigos para diferentes arquivos e diferentes ocasiões, em vez de termos que refazer toda a programação a cada vez que mudarem nossos dados de entrada. 
-Você pode abrir várias janelas de script, uma ao lado da outra e navegar entre elas, como se faz com as abas de um navegador. Neste curso, faremos todas as aulas e exercícios utilizando os arquivos de script.
+Isto é importante, pois otimiza o uso do R ao permitir rodar os mesmos códigos para diferentes arquivos e diferentes ocasiões, em vez de termos que refazer toda a programação a cada vez que mudarem os dados de entrada. 
+Você pode abrir várias janelas de script, uma ao lado da outra e navegar entre elas, como se faz com as abas de um navegador. Neste curso, todas as aulas e exercícios utilizarão os arquivos de script.
 
-Para acrescentar a janela de script (_source pane_), basta criar um novo arquivo, clicando em ![](fig/add_icon.png), logo abaixo de _File_, e em seguida em ![](fig/script_file.png). Nossa janela do RStudio deve ficar conforme a figura a seguir. 
+Para acrescentar a janela de script (_source pane_), basta criar um novo arquivo, clicando em ![](fig/add_icon.png), logo abaixo de _File_, e em seguida em ![](fig/script_file.png). Na janela do RStudio deve ficar conforme a figura a seguir. 
 
 ![](fig/RStudio_layout2.png)
 
@@ -47,11 +55,11 @@ Todos os objetos que forem criados na sua sessão do R/RStudio serão automatica
 
 ![Aba Environment](fig/aba_env1.png)
 
-Note que até o momento, nosso _Environment_ encontra-se vazio. Isso porque ainda não "guardamos" nenhum objeto ou resultados das operações que realizamos anteriormente.
+Note que até o momento, o _Environment_ encontra-se vazio. Isso porque nenhum objeto ou resultados das operações realizadas até o momento foi armazenada.
 
 ##### Atribuição de objetos no R
 
-Para criarmos um objeto no R, seja para aramazenar um valor específico ou o resultado de uma operação, utilizamos o sinal de atribuição característico do R `<-`, i.e. `a <- b` (lê-se _a recebe o valor de b_). Pode-se utilizar ainda o sentido contrário: `b -> a` (_a recebe o valor de b_), ou ainda o sinal de igual `=`. Essas alternativas são menos convencionais. Sugerimos a utilização de `a <- b` para que não se confunda a criação de objetos com a passagem de parâmetros em argumentos de funções mais a frente.
+Para criar um objeto no R, seja para armazenar um valor específico ou o resultado de uma operação, é necessário utilizar o sinal de atribuição característico do R `<-`, i.e. `a <- b` (lê-se _a recebe o valor de b_). Pode-se utilizar ainda o sentido contrário: `b -> a` (_a recebe o valor de b_), ou ainda o sinal de igual `=`. Essas alternativas são menos convencionais. O consenso é a utilização de `a <- b` para que não se confunda a criação de objetos com a passagem de parâmetros em argumentos de funções mais a frente.
 
 Para criar um objeto/variável **x** que contém o valor **2**, execute:
 
@@ -65,11 +73,11 @@ x
 
 **DICA:** O atalho para o operador de atribuição `<-` é `Alt+-`.
 
-Note agora que nossa aba _Environment_ não está mais vazia:
+Note agora que a aba _Environment_ não está mais vazia:
 
 ![](fig/aba_env2.png)
 
-Agora vamos salvar os resultados de algumas operações aritiméticas e de comparações lógicas:
+Agora, o exercício é executar algumas operações aritméticas e de comparações lógicas para salvar os objetos:
 
 ```{r}
 out1 <- 789/34.5
@@ -78,7 +86,7 @@ out3 <- out1 > out2
 ```
 
 
-Vejamos como ficou nosso _Environment_ com os novos objetos criados:
+Observem como ficou o _Environment_ com os objetos criados:
 
 ![](fig/aba_env3.png)
 
@@ -119,14 +127,14 @@ Se você quiser salvar elementos específicos e não todo o environment, você p
 save(out1, out2, file="C:\\caminho_para_pasta_de_preferencia\\meu_workspace.RData")
 ```
 
-Para carregar esses objetos, você tambpem usará a função `load()`.
+Para carregar esses objetos, você também usará a função `load()`.
 
 **DICA:** Para salvar e carregar um único elemento, como por exemplo um dataset (tabela) que foi trabalhado, mas que deverá ainda ser carregado em uma nova sessão, você pode usar as funções  `saveRDS()` e `readRDS()`.
 
 
 ### Estrutura da linguagem R
 
-**R** pode ser considerado uma linguagem de programação funcional, uma vez que a maioria dos procedimentos e rotinas são realizadas por meio de funções que recebem alguns argumentos como _input_, executam algumas ações sobre esses argumentos e retornam um output. Grosso modo, o uso de funções se dá da seguinte forma: 
+**R** pode ser considerado uma linguagem de programação funcional, uma vez que a maioria dos procedimentos e rotinas são realizadas por meio de funções que recebem alguns argumentos como _input_, executam algumas ações sobre esses argumentos e retornam um output. De modo geral, o uso de funções se dá da seguinte forma: 
 
 ```{r, eval=FALSE}
 nome_da_funcao(argumento1 = valor1, argumento2 = valor2, ...)
@@ -138,7 +146,7 @@ Como você verá mais à frente, qualquer usuário pode criar uma função no R 
 
 **DICA:** Não precisamos utilizar sempre o formato `nome_argumento=valor` dentro das funções, pois o R é inteligente o suficiente para fazer o _matching_ dos argumentos pela posição em que são passados (`nome_da_funcao(valor1, valor2)`) ou mesmo pelas letras iniciais do argumento informado.
 
-Vejamos alguns exemplos de funções que executam oeprações matemáticas e que já vem _de fábrica_ no _base R_ (distribuição básica do R):
+Nesta etapa serão apresentados alguns exemplos de funções que executam operações matemáticas e que já estão implementadas no _base R_ (distribuição básica do R):
 
 **DICA:** O RStudio possui a funcionalidade de autocompletar as palvras que você digita com os objetos criados durante sua sessão R ou já existentes na memória. Quando for digitar as funções abaixo, faça um teste digitando as primeiras duas letras de cada função e pressiona `TAB`.
 
@@ -167,7 +175,7 @@ factorial(4)
 
 ## Pacotes no R {#pkg}
 
-Um dos motivos do grande sucesso da linguagem R deve-se ao fato de que qualquer usuário pode desenvolver uma "suíte" contendo diversas funções, para executar uma ou várias tarefas. Esse conjunto ou suíte de funções pode ser disponibilizado na forma de um pacote, o qual outros usuários poderão instalar e também dele usufruir. Após cumprir uma série de exigentes requisitos, esses pacotes geralmente são disponibilizados no [Comprehensive R Archive Network (CRAN)](https://cran.r-project.org).
+Um dos motivos do grande sucesso da linguagem R deve-se ao fato de que qualquer usuário pode desenvolver diversas funções, para executar uma ou várias tarefas, e agrupar em determinado ambiente (este procedimento é conhecido como empacotamento ou suíte de funções). Esse conjunto de funções/procedimentos pode ser disponibilizado na forma de um pacote, onde outros usuários poderão instalar e utilizar as funcionalidades disponíveis nele. Após cumprir uma série de requisitos, esses pacotes geralmente são disponibilizados no [Comprehensive R Archive Network (CRAN)](https://cran.r-project.org).
 
 O CRAN possui uma política bastante séria de revisão de pacotes. Para que um pacote R possa compor o repositório do CRAN, deve atender a uma série de exigências e ser aprovado em diversos testes focados essencialmente nos seguintes fatores: segurança para o usuário; funcionamento sem erros em pelo menos dois sistemas operacionais; documentação densa (inclusive com citações bibliográficas) sobre as funcionalidades do pacote.
 
@@ -179,24 +187,26 @@ Se você quiser saber o número de pacotes disponíveis no CRAN hoje, execute:
 dim(available.packages(contrib.url(getOption("repos")), filters=list()))[1]
 ```
 
-Em números de março de 2020, como você deve ter notado, temos mais de 15 mil pacotes no CRAN para as mais diversas finalidades. Para saber os tipos de pacotes existentes no repositório, recomenda-se uma visita ao [_Task Views_](https://cran.r-project.org/web/views/) do CRAN. Há pacotes de Econometria, Análise Econômica Regional, Estatítica, Clusterização, Ensaios Clínicos, Séries Temporais, Otimização, Tratamento de Dados, Aprendizagem de Máquina e muitos outros.
+Considerando os quantitativos de junho de 2021, existiam quase 18 mil pacotes no CRAN para as mais diversas finalidades. Segue uma pequena lista para dar uma ideia dos temas abordados em pacotes: Econometria, Análise Econômica Regional, Estatística, Clusterização, Ensaios Clínicos, Séries Temporais, Otimização, Tratamento de Dados, Aprendizagem de Máquina e muitos outros. Para saber os tipos de pacotes existentes no repositório, recomenda-se uma visita ao [_Task Views_](https://cran.r-project.org/web/views/) DO cran
 
 ### Instalação de pacotes
 
 Para instalar pacotes disponíveis no CRAN, deve-se utilizar a função `install.packages("nome_do_pacote")`, passando-se o nome do pacote desejado entre aspas como argumento da função.
 
-Vamos testar essa funcionalidade instalando o pacote `REAT - Regional Economic Analysis Toolbox`, que é um pacote que você provavelmente utilizará bastante em suas análises no IPEA:
+Para exercitar este procedimento, será instalado o pacote janitor, que disponibiliza algumas funções para manipulação de bases de dados (arrumar nome de variáveis, remoção de linhas e/ou colunas vazias, retirar informações duplicadas, etc.), uma biblioteca que provavelmente será bastante utilizada no dia a dia profissional:
 
 ```{r, eval=FALSE}
-install.packages("REAT")
+install.packages("janitor")
 ```
 
 Se o pacote foi corretamente instalado, você deve ver algo semelhante a seguinte mensagem no console:
 
 ```{sh, eval=FALSE}
-package ‘REAT’ successfully unpacked and MD5 sums checked
+package ‘janitor’ successfully unpacked and MD5 sums checked
+
 The downloaded binary packages are in
 	C:\Users\...\...\...\...\...\downloaded_packages
+	
 >
 ```
 
@@ -205,7 +215,7 @@ Não se assuste caso outros pacotes também tenham sido instalados. Isso é muit
 Para carregar ou anexar o pacote à sua sessão no R, de modo que você possa utilizar as funções disponíveis nele, empregamos a função `library(nome_do_pacote)` ou `require(nome_do_pacote)`. Neste caso, o nome do pacote pode vir com ou sem aspas.
 
 ```{r, eval=FALSE}
-library(REAT)
+library(janitor)
 ```
 
 Se você não quiser carregar um pacote completamente em sua sessão do R, porque vai apenas utilizar uma função específica, ao invés de `library()`, você pode usar o formato `nome_do_pacote::nome_dafunção(parâmetro)`.
@@ -228,17 +238,17 @@ A segunda fonte seria o [**Github**](https://www.github.com) que é um sistema p
 
 ## Como obter ajuda
 
-Essa talvez seja a parte mais importante de todo o material. Saber **como** e **onde** buscar ajuda pode significar gastar apenas alguns minutos ao invés de horas ou mesmo dias na resolução de um problema envolvendo análise de dados e programação. Ao longo deste curso e ao empregar R em uma atividade de trabalho, vocês vão se deparar com diversas dúvidas envolvendo lógica de programação, análise de dados, ou mesmo buscando sabe se existe algum pacote já implementado que realize a tarefa que vocês precisam.
+Essa talvez seja a parte mais importante de todo o material. Saber **como** e **onde** buscar ajuda pode significar gastar apenas alguns minutos ao invés de horas ou mesmo dias na resolução de um problema envolvendo análise de dados e programação. Ao longo deste curso e ao empregar R em uma atividade de trabalho, vocês vão se deparar com diversas dúvidas envolvendo lógica de programação, análise de dados, ou mesmo buscando saber se existe algum pacote já implementado que realize a tarefa que vocês precisam.
 
 ### O _Help_ do R
 
-O primeiro local para se buscar ajuda sobre algo relacionado ao R, normalmente está dentro do próprio R ou RStudio. Conforme meniconamos na seção \@ref(#pkg), a política do CRAN exige que os pacotes estejam muito bem documentados. E isso ajuda muito aos usuários e desenvolvedores. Além da documentação do `base R`e dos demais pacotes que já acompanham a instalação padrão, ao instalar um novo pacote, a documentação desta nova biblioteca passa a compor o _help_ do R instalado em sua máquina. Então, quando queremos entender uma função, ou seja, conhecer  seus parâmetros de entrada, o que ela faz e o que retorna, recomenda-se utilizar o _help_ do próprio R.
+O primeiro local para se buscar ajuda sobre algo relacionado ao R, normalmente está dentro do próprio R ou RStudio. Conforme mencionado na seção @ref(#pkg), a política do CRAN exige que os pacotes sejam muito bem documentados. E isso ajuda muito os usuários e desenvolvedores. Além da documentação do `base R` e dos demais pacotes que já acompanham a instalação padrão, ao instalar um novo pacote, a documentação desta nova biblioteca passa a compor o _help_ do R instalado em sua máquina. Então, quando precisar entender uma função, ou seja, conhecer seus parâmetros de entrada, o que ela faz e o que retorna, recomenda-se utilizar o help do próprio R.
 
 No painel direito inferior, você encontra uma série de abas, sendo que a 3ª delas é aba que exibe o material de ajuda. Você pode fazer as buscas utilizando o campo de pesquisa da própria aba, ou por meio de comandos inseridos no console.
 
 ![Painel de ajuda do R/Rstudio](fig/help1.png)
 
-Um exemplo: imagine que você gostaria de saber se o R possui alguma função que calcula o logaritmo (base $e$) de um número. Para isso, temos a função `help.search()`, que recebe como parâmetro ("entre aspas") o tópico sobre o qual você deseja pesquisar. Toda a ajuda do R está em inglês; por isso, se você quer encontrar algo relacionado à logaritmo, deve executar o comando `help.search("logarithm")` ou `??logrithm`.
+Como ilustração, imagine que você gostaria de saber se o R possui alguma função que calcula o logaritmo (base $e$) de um número. Para isso, existe a função `help.search()`, que recebe como parâmetro ("entre aspas") o tópico sobre o qual você deseja pesquisar. Toda a ajuda do R está em inglês; por isso, se você quer encontrar algo relacionado à logaritmo, deve executar o comando `help.search("logarithm")` ou `??logrithm`.
 
 Vejamos:
 
@@ -273,7 +283,7 @@ Geralmente, os tópicos mais importantes dos arquivos de ajuda são _Description
 
 #### _Vignettes_
 
-Mais a frente, veremos como instalar novos pacotes no R. Esses pacotes são como módulos adicionais que permitem ao usuário realizar mais operações e atividades na linguagem. Muitos desses pacotes trazem consigo, além da documentação básica, verdadeiros tutoriais sobre como utilizar o pacote em si ou funções específicas desses pacotes. São muito mais detalhados que a simples documentação do _Help_ do pacote ou de uma função. Enquanto alguns não fornecem qualquer _vignette_, outros podem trazem mais de uma _vignette_. Caso você queira verificar utilize:
+Mais a frente, será necessário instalar novos pacotes no R, com o objetivo de permitir ao usuário realizar mais operações e atividades na linguagem. Muitos dessas bibliotecas trazem consigo, além da documentação básica, verdadeiros tutoriais sobre como utilizar o pacote em si ou funções específicas dele. São muito mais detalhados que a simples documentação do _Help_ do pacote ou de uma função. Enquanto alguns não fornecem nenhuma documentação (seja ela detalhada, _vignette_, ou não), outros podem trazer mais de uma _vignette_. Caso você queira verificar, basta utilizar:
 
 ```{r, eval=FALSE}
 vignette("nome_do_pacote")
@@ -283,7 +293,7 @@ vignette("nome_do_pacote")
 #### Ajuda via Internet
 
 
-R é bastante conhecido por sua comunidade extremamente ativa. Muitas vezes, ao analisar dados, surgem problemas que não são passíveis de solução apenas com a documentação interna da linguagem. Nesses casos, é necessário recorrer à experiência de outros usuários que tenham vivenciado o problema e que possam dar dicas de como ao ponto desejado. Nos 20 anos do R, vai ser difícil não encontrar alguém que vivenciou o mesmo problema que você. Nesse ponto a internet é nossa melhor amiga e não é vergonha nenhuma procurar ajuda lá. Dos mais inexperientes usuários da linguagem aos mais talentosos desenvolvedores de R, todos, sem excessão, acabam recorrendo a internet como uma valiosa fonte de informação e ajuda. Existem livros gratuitos, blogs com excelentes tutoriais, fóruns e sites de perguntas e respostas (Q&A).
+R é bastante conhecido por sua comunidade extremamente ativa. Muitas vezes, ao analisar dados, surgem problemas que não são passíveis de solução apenas com a documentação interna da linguagem. Nesses casos, é necessário recorrer à experiência de outros usuários que tenham vivenciado o problema e que possam dar dicas de como solucioná-lo. Depois de mais de 20 anos do R, vai ser difícil não encontrar alguém que vivenciou o mesmo problema que você. Nesse ponto a internet é a melhor amiga de todos os usuários e não é vergonha nenhuma procurar ajuda lá. Dos mais inexperientes usuários da linguagem aos mais talentosos desenvolvedores de R, todos, sem exceção, acabam recorrendo à internet como uma valiosa fonte de informação e ajuda. Existem livros gratuitos, blogs com excelentes tutoriais, fóruns e sites de perguntas e respostas (Q&A).
 
 Neste último caso, não há como não mencionar o [StackOverflow](http://www.stackoverflow.com), que é um site de perguntas e respostas especializado em programação em geral. A comunidade de R no StackOverflow é extremamente ativa e uma das maiores do site. Lá você encontrará usuários iniciantes, intermediários, avançados, desenvolvedores de pacotes e até mesmo gente que atua na atualização da linguagem e do RStudio. Há uma versão em português e uma em inglês. Recorra à versão em inglês do site, por ser obviamente muito mais ativa.
 
@@ -349,7 +359,7 @@ Exemplo:
 log
 ```
 
-Nesta seção, estudaremos mais a fundo a criação e manipulação de vetores e Dataframes, que julgamos serem os objetos mais importantes para este curso. A criação de funções será objeto de estudo do Módulo 
+Nesta seção, a criação e manipulação de vetores e Dataframes será estudada mais a fundo, por serem os objetos mais importantes para este curso. A criação de funções será objeto de estudo do Módulo 3.
 <!-- \@ref(m5). -->
 
 
@@ -385,7 +395,7 @@ v3 <- c(TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, TRUE); v3
 ```
 
 
-Experimente misturar dois vetores. Como os vetores só podem ser de um único tipo, o R automaticamente forçara o resultado final para um único tipo.
+Experimente misturar dois vetores. Como os vetores só podem ser de um único tipo, o R automaticamente forçará o resultado final para um único tipo.
 
 Exemplo:
 
@@ -423,7 +433,7 @@ v3[5]
 ```
 
 
-**Extraindo mais de uma elemento:**
+**Extraindo mais de um elemento:**
 
 Aqui você usará um vetor dentro de outro vetor. A ideia é que o vetor dentro dos colchetes `[]` contenha as posições (índices) a serem extraídas do vetor original. Lembre-se que o vetor contendo as posições deverá ser criado e, para criar um vetor, usamos a função `c()`.
 
@@ -448,7 +458,8 @@ v3[pos3]
 
 **Extraindo elementos em um intervalo:**
 
-Mais uma vez usaremos vetor dentro de vetor. A diferência é que criaremos um vetor utilizando a função `:`, a qual cria uma sequência de valores ou intervalo. Podemos utilizar ainda a função `seq(a,b)`
+Mais uma vez será utilizado um vetor dentro de outro vetor. A diferença é que será criado um vetor utilizando a função `:`, a qual cria uma sequência de valores ou intervalo. Também é possível utilizar a função `seq(a,b)`
+
 
 ```{r}
 # do 1º ao 3º elementos do vetor v1
@@ -475,7 +486,7 @@ length(v6)
 
 #### Como alterar elementos de um vetor
 
-Uma vez que você entendeu o processo de indexação de vetores. Você pode alterar ou substituir um ou mais elementos de um vetor, usando ndexação e atribuição.
+Uma vez que você entendeu o processo de indexação de vetores. Você pode alterar ou substituir um ou mais elementos de um vetor, usando indexação e atribuição.
 
 ```{r}
 v1[2] <- 450.78
@@ -485,13 +496,14 @@ v3[c(3,5)] <- c(TRUE, FALSE) # a substituição tem que ser do mesmo tamanho do 
 
 ### Dataframes
 
-Os Dataframes são as "tabelas" do R. Provavelmente será um dos objetos que você mais utilizará para fazer análise de dados. O Dataframe possui linhas e colunas. Pense nas colunas como vetores, onde cada uma das posições desse vetor indica uma linha. Podemos pensar os Dataframes, então, como uma coleção de vetores, que podem inclusive ser de tipos diferentes, mas necessariamente devem possuir o mesmo tamanho. Isso faz todo sentido, pois numa tabela temos variáveis numéricas, nomes, e outros tipos que não serão tratados neste curso, como datas, por exemplo.
+Os Dataframes são as “tabelas” do R. Provavelmente será um dos objetos que você mais utilizará para fazer análise de dados. O Dataframe possui linhas e colunas. Pense nas colunas como vetores, onde cada uma das posições desse vetor indica uma linha. Desta forma, pode-se pensar nos Dataframes, como uma coleção de vetores, que podem inclusive ser de tipos diferentes, mas necessariamente devem possuir o mesmo tamanho. Isso faz todo sentido, pois numa tabela pode existir variáveis numéricas, nomes, e outros tipos que não serão tratados neste curso, como datas, por exemplo.
 
 #### Como criar um Dataframe
 
-Para criarmos um dataframe, utilizamos a função `data.frame()`. No entanto, o mais comum é que o dataframe seja criado a a partir da leitura de alguma base de dados, por meio das funções de leitura que serão apresentadas principalmente no Módulo \@ref(m2).
+Para criar um dataframe, se utiliza a função data.frame(). No entanto, o mais comum é que o dataframe seja criado a partir da leitura de alguma base de dados, por meio das funções de leitura que serão apresentadas principalmente na Seção 2.7.
 
-Vamos criar um dataframe de 3 colunas. Os argumentos principais são os vetores que compõem as colunas. 
+Para praticar, o objetivo é criar um dataframe de 3 colunas. Os argumentos principais são os vetores que compõem as colunas.
+
 
 ```{r}
 # OBS: todos os vetores precisam ter o mesmo tamanho
@@ -510,7 +522,7 @@ data.frame
 help("data.frame")
 ```
 
-Durante a criação de um dataframe, podemos escolher outros nomes para as colunas:
+Durante a criação de um dataframe, também é possível escolher outros nomes para as colunas:
 
 ```{r}
 df1 <- data.frame(col1 = v6, col2 = v7, col3 = v8, col4 = v9)
@@ -529,7 +541,7 @@ str(df1)
 ```
 
 
-Note que a coluna 2 `col2` foi tratada como _factor_ e não como _character_, como esperávamos. _factor_ é uma abstração que o R utiliza para salvar variáveis categóricas na memória de modo a ocupar menos espaço. Basicamente, ele converte as categorias em um número, de modo a otimizar a utilização de memória. Se a variável for impressa no console, ele faz uma reconversão apenas para apresentá-la ao usuário. Para que a `col2` seja realmente criada como uma coluna do tipo `character`, devemos setar o parâmetro `stringsAsFactors = FALSE`. Guarde bem essa dica, pois você usará esse mesmo parâmetro ao ler dados externos, transformando-os em dataframes no R. 
+Note que a coluna 2 col2 foi tratada como _numeric_ e não como _character_, como esperado. 
 
 ```{r}
 df1 <- data.frame(col1 = v6, col2 = v7, col3 = v8, col4 = v9, stringsAsFactors = FALSE)
@@ -551,9 +563,9 @@ ncol(df1)
 
 #### Como extrair elementos de um Dataframe
 
-Para extrair os elementos de um Dataframe, utilizaremos a mesma técnica de indexação dos vetores, usando colchetes `[]`. A diferença é que, como o Dataframe possui duas dimensões, precisamos trabalhar com ambas, separando os índices de cada dimensão com um vírgula dentro dos colchetes `nome_df[índice_linhas, indice_colunas]`. 
+Para extrair os elementos de um Dataframe, basta utilizar a mesma técnica de indexação dos vetores, usando colchetes `[]`. A diferença é que, como o Dataframe possui duas dimensões, será necessário trabalhar com ambas, separando os índices de cada dimensão com um vírgula dentro dos colchetes  `nome_df[índice_linhas, indice_colunas]`. 
 
-Agora, os valores que passarmos dentro dos colchetes referem-se às linhas ou as colunas de um Dataframe. É como jogar batalha naval. 
+Agora, os valores que são passados dentro dos colchetes referem-se às linhas e/ou as colunas de um Dataframe.
 
 **DICA:** Se você quiser extrair apenas linha(s) inteira(s), deixe a dimensão da coluna em branco, ex: `nome_df[linha_X, ]`. Se você quiser extrair apenas coluna(s), deixe a dimensão das linhas em branco, ex: `nome_df[, coluna_Y]`.
 
@@ -618,18 +630,18 @@ df1$col3
 ```
 
 
-Note que o output é impresso na horizontal Isso ocorre, porque, quando extraímos apenas uma coluna, estamos extraindo um vetor. E a forma de output de um vetor é na horizontal, como vimos anteriormente.
+Note que o output é impresso na horizontal Isso ocorre, porque, quando apenas uma coluna é extraída, está trabalhando com  um vetor. E a forma de output de um vetor é na horizontal, como visto anteriormente.
 
 ***
 
 
 ## Leitura de Dados no R
 
-Até o momento, trabalhamos criando objetos a partir de dados informados via script ou console. No entanto, o mais comum quando se faz análise de dados, é ler dados a partir de fontes externas, como um arquivo .txt ou .csv, um banco de dados relacional (SQL) no servidor de nossa empresa, ou ainda, a partir de páginas da internet. Nesta seção, veremos como ler bases de dados armazenadas localmente no computador. 
+Até o momento, só foram manipulados objetos a partir de dados informados via console ou script. No entanto, o mais comum quando se faz análise de dados, é fazer o carregamento dos mesmos a partir de fontes externas, como um arquivo .txt ou .csv, um banco de dados relacional (SQL) no servidor da empresa, ou ainda, a partir de páginas da internet. Nesta seção, será abordado como ler bases de dados armazenadas localmente no computador. 
 
-Eu costumo dizer que, em R, sempre há pelo menos 3 formas diferentes de realizar uma mesma tarefa. No caso da leitura de dados, isso não é diferente, uma vez que o R possui diversos pacotes para realizar a leitura dos dados; uns focam na rapidez, outros na praticidade e outros, ainda, são feitos especificamente para manusear bases de dados massivas. Quanto a esse último aspecto, há de se reconhecer que o R não tem um gerenciamento de memória que permita ao usuário carregar bancos de dados muito grandes (na casa das 10 milhões de linhas mais ou menos). Isso é, de certa forma, proposital, uma vez que o R foi criado para tornar mais fácil a vida do usuário que lida com análise dados. Mas há que se ressaltar que, devido a sua comunidade extremamente ativa, vários pacotes foram e vem sendo desenvolvidos com o objetivo de melhorar a forma como o R lida com o armazenamento de objetos na memória.
+Habitualmente, trabalhando com programação é possível realizar uma mesma tarefa de mais de uma forma diferente. No caso da leitura de dados no R/RSudio, isso não é diferente, uma vez que o R possui diversos pacotes para realizar a leitura dos dados; uns focam na rapidez, outros na praticidade e outros, ainda, são feitos especificamente para manusear bases de dados massivas. Quanto a esse último aspecto, há de se reconhecer que o R não tem um gerenciamento de memória que permita ao usuário carregar bancos de dados muito grandes (na casa das 10 milhões de linhas mais ou menos). Isso é, de certa forma, proposital, uma vez que o R foi criado para tornar mais fácil a vida do usuário que lida com análise dados. Mas é necessário ressaltar que, devido a sua comunidade extremamente ativa, vários pacotes foram e estão sendo desenvolvidos com o objetivo de melhorar a forma como o R lida com o armazenamento de objetos na memória.
 
-Neste curso, nós focaremos na utilização do pacote `readr`, por entendermos ser um meio termo entre praticidade e rapidez, considerando as alternativas do `base R` e da função `fread()` do pacote `data.table`.
+Neste curso, focará na utilização do pacote `readr`, por haver um consenso que ele alia praticidade e rapidez, considerando as alternativas do `base R` e da função `fread()` do pacote `data.table`.
 
 ## O Tidyverse
 
@@ -639,7 +651,7 @@ O `readr` compõe um conjunto de pacotes chamado de **Tidyverse**.
 
 ![Hexsticker do Tidyverse](fig/tidyverse2.png){width=150px}
 
-Podemos definir o _Tidyverse_, então, como um _meta-package_ que congrega uma coleção de diversos outros pacotes R voltados para importação, exploração, manipulação e visualização de dados. Vão desde pacotes para manipulação de strings, expressões regulares, datas, passando por pacotes de leitura e importação, manipulação e visualização de dados, até a geração de relatórios e criação de páginas web, dentre outras coisas.
+Considerando a afirmação de  Hadley Wickham, é possível definir o _Tidyverse_ como um _meta-package_ que congrega uma coleção de diversos outros pacotes R voltados para importação, exploração, manipulação e visualização de dados. Vão desde pacotes para manipulação de strings, expressões regulares, datas, passando por pacotes de leitura e importação, manipulação e visualização de dados, até a geração de relatórios e criação de páginas web, dentre outras coisas.
 
 Esses pacotes buscam propiciar uma maior padronização e facilidade na forma de lidar com dados no R.
 
@@ -652,100 +664,57 @@ As funções de leitura mais importantes no pacote são:
 * `read_csv()`: lê arquivos `.csv` ou `.txt` no formato americano, onde o separador de colunas é a vírgula;
 * `read_csv2()`: lê arquivos `.csv` ou `.txt` no formato pt-br, onde o separador de colunas é o ponto e vírgula;
 * `read_tsv()`: lê arquivos `.csv` ou `.txt`, onde o separador de colunas é o tab `\t`;
-* `read_table()`: lê arquivos `.txt`, onde o separador de colunas é é o espaço em branco`;
-* `read_delim()`: permite ler arquivos de diversas extensões, onde o usuário pode especificar o delimitador por meio do parâmetro `delim`.
-Vamos para a prática, utilizando dados editados a partir da base [_Produção Madeireira de Espécies Nativas Brasileiras: 2012 a 2017_](http://ibama.gov.br/flora-e-madeira/publicacoes) publicada pelo IBAMA. Há diversas bases nesse site, bem como scripts em R para facilitar a manipulação dos dados. Você pode baixar os dados. No entanto, como nosso objetivo é criar a experiência de leitua, editamos aleatoriamente essa base, reduzindo seu tamanho para 100 mil linhas, e a disponibilizamos neste [**LINK**](https://raw.githubusercontent.com/allanvc/book_IADR-T/master/datasets/PA%20GF%202017%20jan-jun_editada.csv). Uma vez na página, você pode salvá-la em seu computador clicando com o botão direito do mouse e depois em `Salvar como`.
-Note que os dados estão em um arquivo `.csv` no padrão norte-americano (colunas separadas por vírgulas `,`).
-Vamos fazer a leitura do arquivo que foi salvo em nosso computador.
+* `read_table()`: lê arquivos `.txt`, onde o separador de colunas é o espaço em branco;
+* `read_delim()`: permite ler arquivos de diversas extensões, onde o usuário pode especificar o delimitador por meio do parâmetro delim. A atividade prática proposta é utilizar os dados disponibilizados no repositório Git deste livro. A primeira base de dados que será utilizada é `taxa_mortalidade`, que contém o quantitativo de nascimentos óbitos infantis nos municípios de Pernambuco considerando o período entre 1999 e 2012. Estas e outras informações estão disponíveis no site do DATASUS. Como o intuito nesta etapa é promover a experiência de leitura/carregamento dos dados, a etapa de manipulação dessas informações já foi realizada. Uma vez na página, você pode salvá-la em seu computador clicando com o botão direito do mouse e depois em Salvar como. Note que os dados estão em um arquivo `.csv` no padrão norte-americano (colunas separadas por vírgulas ,). Será necessário realizar a leitura do arquivo que foi salvo no seu computador.
 **DICA:** No seu computador, o caminho para o arquivo será outro.
 ```{r, eval=FALSE}
 library(readr)
-tb_ibama <- read_csv(file="C:\\Users\\...\\PA GF 2017 jan-jun.csv")
+tb_tx_mort_infantil <- read_csv(file="C:\\Users\\...\\taxa_mortalidade.csv")
 # ou utilizando a função mais genérica
-tb_ibama <- read_delim(file="C:\\Users\\...\\PA GF 2017 jan-jun.csv",
+tb_tx_mort_infantil <- read_delim(file="C:\\Users\\...\\taxa_mortalidade.csv",
                        delim = ",")
 ```
 
-Se você não quiser salvar a base em seu computador, lendo o aqruivo direto do site, você também pode. É só copiar o endereço do arquivo apresentado no browser e passar para o argumento `file`. Caminhos passados para o argumento `file` começados em `http://`, `https://`, `ftp://`, ou `ftps://` resultam no download e leitura automática do arquivo.
+Se você não quiser salvar a base em seu computador, lendo o arquivo direto do site, você também pode. É só copiar o endereço do arquivo apresentado no browser e passar para o argumento `file`. Caminhos passados para o argumento `file` começados em `http://`, `https://`, `ftp://`, ou `ftps://` resultam no download e leitura automática do arquivo.
 
 
 ```{r, echo=FALSE}
 library(readr)
-tb_ibama <- read_csv(file="https://raw.githubusercontent.com/allanvc/book_IADR-T/master/datasets/PA%20GF%202017%20jan-jun_editada.csv")
-# ou
-# tb_ibama <- read_delim(file="https://raw.githubusercontent.com/allanvc/book_IADR-T/master/datasets/PA%20GF%202017%20jan-jun_editada.csv",
-#                        delim = ",")
+
+tb_tx_mort_infantil <- read_csv(file="https://raw.githubusercontent.com/brunolucian/cursoBasicoR/71de395a83f40736e5ea4f908209f960305c8173/datasets/taxa_mortalidade.csv")
+
 ```
 
 
-<!-- **DICA:** `readr` realmente facilita o processo de leitura de arquivos. Podemos, por exemplo, ler arquivos de dados que estão dentro de arquivos zipados `.zip`, como no exemplo abaixo. Arquivos na extensão `.zip`, `.gz`, `.bz2` ou `.xz` são automaticamente descompactados. -->
-
-<!-- ```{r, eval=FALSE} -->
-<!-- library(readr) -->
-
-<!-- tb_ibama <- read_csv(file="https://raw.githubusercontent.com/allanvc/book_IADR-T/master/datasets/PA%20GF%202017%20jan-jun_editada.zip") -->
-
-<!-- ``` -->
-
-
-```{r, echo=FALSE}
-# original
-# library(readr)
-# tb_ibama <- read_delim(file="/home/allan/Documents/teaching/curso_R_ipea_mar-abr2020/datasets/PA GF 2017 jan-jun.csv", delim = ",")
-# sample(1984)
-# write.csv(tb_ibama[sample(1:nrow(tb_ibama), 100000),], "PA GF 2017 jan-jun_editada2.csv", row.names = FALSE)
-# tb_ibama <- read_delim(file="/home/allan/Documents/teaching/curso_R_ipea_mar-abr2020/datasets/PA GF 2017 jan-jun_editada.csv", delim = ",")
-# diferenças ao indexar um tibble e um dataframe
-# tb_ibama[,"TIPO_GF", drop= TRUE]
-# tb_ibama[,"TIPO_GF"]
-# tb_ibama[,2]
-```
 
 Note que assim que o arquivo é lido, as funções imprimem no console os nomes de cada coluna e as formas como elas foram lidas. Isto permite ao usuário checar se tudo ocorreu bem durante a leitura. Caso alguma coluna não tenha sido lida no formato em que você esperava, é só copiar a saída e rodar a função novamente, mudando a especificação daquela coluna em particular.
 
-Por exemplo, vamos alterar a coluna EMISSAO de ponto flutante/decimal `double` (que ocupa mais espaço na memória), para que seja lida como número inteiro `integer`. Fazemos essa especificação no argumento `col_types`.
+<!-- Por exemplo, vamos alterar a coluna EMISSAO de ponto flutante/decimal `double` (que ocupa mais espaço na memória), para que seja lida como número inteiro `integer`. Fazemos essa especificação no argumento `col_types`. -->
 
 ```{r}
-tb_ibama <- read_csv(file="https://raw.githubusercontent.com/allanvc/book_IADR-T/master/datasets/PA%20GF%202017%20jan-jun_editada.csv",
-                     col_types = cols(
-                       X1 = col_double(),
-                       TIPO_GF = col_character(),
-                       STATUS_GF = col_character(),
-                       UF_REMETENTE = col_character(),
-                       MUNICÍPIO_REMETENTE = col_character(),
-                       TIPO_DESTINO = col_character(),
-                       CEPROF_DESTINATÁRIO = col_character(),
-                       UF_DESTINATÁRIO = col_character(),
-                       MUNICÍPIO_DESTINATÁRIO = col_character(),
-                       N_AUTORIZAÇÃO = col_character(),
-                       PROCESSO = col_character(),
-                       EMISSAO = col_integer(),
-                       NOME_CIENTÍFICO = col_character(),
-                       PRODUTO = col_character(),
-                       VOLUME = col_double(),
-                       UNID = col_character(),
-                       PRECO_TOTAL = col_double()
-                       )
+tb_tx_mort_infantil <- read_csv(file="https://raw.githubusercontent.com/brunolucian/cursoBasicoR/71de395a83f40736e5ea4f908209f960305c8173/datasets/taxa_mortalidade.csv"
                      )
 ```
 
-
-Uma vez lido o arquivo, podemos inspecioná-lo chamando o objeto criado, ou clicando no nome do objeto em nosso _environment_.
+Uma vez lido o arquivo, é necessário observar chamando o objeto criado, ou clicando no nome do objeto em nosso _environment_.
+Porém antes de fazer isso iremos limpar o nomes das variáveis usando a função `clean_names` do pacote `janitor`.
 
 ```{r}
-tb_ibama
+tb_tx_mort_infantil <- janitor::clean_names(tb_tx_mort_infantil)
+tb_tx_mort_infantil
 ```
 
 
-Note que esse arquivo não se parece muito com o formato clássico de Dataframe que vimos no Módulo \@ref(m1). Ele na verdade é um novo tipo de objeto, que segue a filosofia do _Tydeverse_, comentada na seção anterior. Temos aqui um `tibble`, que nada mais é que um Dataframe mais amigável. Em termos gerais, a diferença de um Dataframe clássico para um `tibble` está principalmente nas informações que nos são apresentadas quando imprimimos o conteúdo do objeto no console. Diferentemente do Dataframe, um `tibble` nos apresenta apenas as 10 primeiras linhas da tabela, os tipos das colunas, e apenas o conteúdo das colunas que cabem em nossa tela.
+Observe que este arquivo não se parece muito com o formato clássico de Dataframe que visto no início deste módulo. Ele na verdade é um novo tipo de objeto, que segue a filosofia do _Tydeverse_, comentada na seção anterior. Aqui se temi um tibble, que nada mais é que um Dataframe mais amigável. Em termos gerais, a diferença de um Dataframe clássico para um tibble está principalmente nas informações que são apresentadas quando o conteúdo do objeto é impresso no console. Diferentemente do Dataframe, um tibble apresenta apenas as 10 primeiras linhas da tabela, os tipos das colunas, e apenas o conteúdo das colunas que cabem em na tela.
 
-Uma outra diferença é no resultado ao executarmos uma identificação. Ainda podemos utilizar `[indice_linhas, indice_colunas]` ou `nome_dataframe$nome_coluna`. A questão é que indexações com chaves, retornaram um `tibble`, mesmo que a operação resulte em uma única coluna. Já a indexação via `$`, retornará um vetor. Resumindo, a primeira não altera o tipo de objeto - continuamos com um `tibble`. O A segunda altera o tipo de objeto.
+
+Uma outra diferença é no resultado ao executar uma identificação. Ainda é possível utilizar `[indice_linhas, indice_colunas]` ou `nome_dataframe$nome_coluna`. A questão é que indexações com chaves, retornaram um tibble, mesmo que a operação resulte em uma única coluna. Já a indexação via `$`, retornará um vetor. Resumindo, a primeira não altera o tipo de objeto - permanece sendo um tibble. A segunda altera o tipo de objeto.
 
 Teste isso na prática:
 
 ```{r, eval=FALSE}
-tb_ibama[,"TIPO_GF"] # ou tb_ibama[,2]
-tb_ibama$TIPO_GF
+tb_tx_mort_infantil[,2] 
+tb_tx_mort_infantil$`Município`
 ```
 
 Outras vantagens do `tibble` são:
@@ -755,44 +724,46 @@ Outras vantagens do `tibble` são:
 
 #### Alternativas
 
-Quando se trata de leitura de dados, há muitas alternativas no R. Embora não pertença ao escopo deste curso, sugerimos que você estude o funcionamento das funções da família `read.table()` do `base R`. Essas funções são mais lentas que as funções do pacote `readr`, mas apresentam maior flexibilidade em relação à especificação de parâmetros.
+Quando se trata de leitura de dados, há muitas alternativas no R. Embora não pertença ao escopo deste curso, seria interessante que você estudasse o funcionamento das funções da família `read.table()` do `base R`. Essas funções são mais lentas que as funções do pacote `readr`, mas apresentam maior flexibilidade em relação à especificação de parâmetros.
 
-No quesito grande bancos de dados, com milhões de observações, sugerimos a função `fread()` do pacote `data.table`. MAs essa velocidade vem com o preço de se ter que aprender um paradigma um pouco diferente de programação, mesmo sendo dentro do R.
+Já para em relação aos bancos de dados com muitas de observações (da ordem de milhões), a função `fread()` do pacote `data.table` é mais adequada. Mas essa velocidade vem com o preço de se ter que aprender um paradigma um pouco diferente de programação, mesmo sendo dentro do R.
 
-Muitas pessoas também tem interesse em ler dados que estão em planilhas ou abas de planilhas Excel em formatos `.xls` e `.xlsx`. Embora não seja a forma mais adequada de armazenar dados, é válido saber que existe uma alternativa para a leitura de dados do Excel. Leia sobre o pacote `readxl` e a função `read_excel()`.
+Muitas pessoas também têm interesse em ler dados que estão em planilhas ou abas de planilhas Excel em formatos `.xls` e `.xlsx`. Embora não seja a forma mais adequada de armazenar dados, é válido saber que existe uma alternativa para a leitura de dados do Excel. Também é interessante a leitura sobre o pacote `readxl` e a função `read_excel()`.
+
 
 ### Escrita e exportação de dados
 
-Apesar do nome, o pacote `readr`também possui funções para escrita de dados. Para exportarmos o resultado de nossas análises no R para uma tabela de extensão `.txt` ou `.csv`, por exemplo, vamos recorrer a funções bastante parecidas com as de leitura, alterando apenas os prefixos de _read_ para _write_. Os sufixos, novamente, dependerão, do tipo de arquivo que se deseja gravar.
+É importante destacar que, apesar do nome, o pacote `readr` também possui funções para escrita de dados. Para exportar o resultado das análises no R para uma tabela de extensão `.txt` ou `.csv`, por exemplo, se utiliza funções bastante parecidas com as de leitura, alterando apenas os prefixos de _read_ para _write_. Os sufixos, novamente, dependerão do tipo de arquivo que se deseja gravar.
 
 As funções mais utilizadas são: `write.csv()`; `ẁrite_csv2`; `write_table()`; e `write.delim()`.
 
-Vamos alterar o arquivo `tb_ibama` para, então, exportarmos a nova versão como um novo arquivo `.csv` no padrão pt-br. Utilizando o conhecimento sobre indexação de objetos do Módulo \@ref(m1), vamos substituir as 10 mil primeiras linhas da coluna `STATUS_GF` para `NÃO VERIFICADO`, e eliminar a primeira coluna, que era uma coluna de índices.
+Agora a proposta é alterar o arquivo `tb_tx_mort_infantil` para, então, exportar a nova versão como um novo arquivo `.csv` no padrão pt-br. Utilizando o conhecimento sobre indexação de objetos deste módulo, você terá que eliminar a primeira coluna, que era uma coluna de índices.
+
 
 **1º) mudando o status**
 
 ```{r, eval=FALSE}
-tb_ibama[1:50000, "STATUS_GF"] <- rep("NÃO VERIFICADO", 50000)
+tb_tx_mort_infantil[1:50000, "STATUS_GF"] <- rep("NÃO VERIFICADO", 50000)
 # ou
-tb_ibama[1:50000, 3] <- rep("NÃO VERIFICADO", 50000)
+tb_tx_mort_infantil[1:50000, 3] <- rep("NÃO VERIFICADO", 50000)
 # ou
-tb_ibama$STATUS_GF[1:50000] <- rep("NÃO VERIFICADO", 50000)
+tb_tx_mort_infantil$STATUS_GF[1:50000] <- rep("NÃO VERIFICADO", 50000)
 ```
 
 
 **2º) excluindo a primeira coluna**
 
-No R, temos uma palavra reservada pela linguagem que transforma os objetos ou elementos de um objeto em vazios. É a palavra `NULL`.
+No R, assim como em outras linguagens de programação, existe uma palavra reservada pela linguagem que transforma os objetos ou elementos de um objeto em vazios. É a palavra `NULL`.
 
 ```{r}
-tb_ibama[, "X1"] <- NULL
+tb_tx_mort_infantil[, "Totobit "] <- NULL
 ```
 
 ```{r, eval=FALSE}
 # ou
-tb_ibama[, 1] <- NULL
+tb_tx_mort_infantil[, 1] <- NULL
 # ou
-tb_ibama_modif <- tb_ibama[, 2:ncol(tb_ibama)]
+tb_tx_mort_infantil_modif <- tb_tx_mort_infantil[, 2:ncol(tb_tx_mort_infantil)]
 # substituimos a versão completa do tibble por uma versão que traz...
 #...apenas os dados da coluna 2 em diante
 ```
@@ -800,11 +771,11 @@ tb_ibama_modif <- tb_ibama[, 2:ncol(tb_ibama)]
 **3º) salvando o novo tibble em um arquivo**
 
 ```{r, eval=FALSE}
-write_csv2(x=tb_ibama,
-           path="C://caminho//...//tabela_ibama_alterada.csv")
+write_csv2(x=tb_tx_mort_infantil_modif,
+           path="C://caminho//...//tabela_tx_mort_infantil_alterada.csv")
 # ou
-write_delim(x=tb_ibama,
-            path="C://caminho//...//tabela_ibama_alterada.csv",
+write_delim(x=tb_tx_mort_infantil_modif,
+            path="C://caminho//...//tabela_tx_mort_infantil_alterada.csv",
             delim=";")
 ```
 
@@ -812,11 +783,12 @@ write_delim(x=tb_ibama,
 
 ### Leitura de dados oriundos do Stata, SAS e SPSS
 
-Nos vimos que nesses 20 anos de história, o **R** cresceu consideravelmente. Durante esse tempo, diversos pesquisadores e profissionais das mais diversas áreas migraram para o R, oriundos principalmente de Stata, SAS e SPSS. Ao encarar o custo da mudança, muitas pessoas se deparam com o desafio de "traduzir" seus scripts de uma linguagem para outra, bem como de lerem dados escritos ou armazenados em extensões usadas por aquelas linguagens.
+Ao longo dos anos, o R cresceu consideravelmente. Durante esse tempo, diversos pesquisadores e profissionais das mais diversas áreas migraram para o R, oriundos principalmente de Stata, SAS e SPSS. Ao encarar o custo da mudança, muitas pessoas se deparam com o desafio de “traduzir” seus scripts de uma linguagem para outra, bem como de lerem dados escritos ou armazenados em extensões usadas por aquelas linguagens.
 
 A instalação padrão do R já oferece uma biblioteca para ler bases de dados oriundas de outras linguagens. O nome do pacote faz todo o sentido: `foreign`. Ele traz diversas funções que tornam simples a importação. Em complemento, recomenda-se a instalação e utilização do pacote `HMisc` também.
 
-A seguir, apresentamos apenas algumas ideias sobre como lidar com datasets "estrangeiros" no R:
+A seguir, serão apresentadas apenas algumas ideias sobre como lidar com datasets “estrangeiros” no R:
+
 
 * SPSS:
 

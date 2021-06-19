@@ -65,7 +65,7 @@ Operador | Operação
 x%%y     | módulo resto
 x%/%y    | quociente inteiro
 
-Vejamos alguns exemplos, digitando em nosso console, logo ao lado de `>`, as seguintes operações:
+Seguem alguns exemplos, digitando no console, logo ao lado de `>`, as seguintes operações:
 
 ```{r}
 2+1
@@ -90,7 +90,7 @@ Teste por exemplo:
 ```
 
 
-No nosso exemplo, o R optou por quebrar a multiplicação dos 100 números em grupos de 17 números nas 4 primeiras linhas e num grupo de 15 valores na última. Na primeira linha de nosso _output_, **2** é o elemento na posição 1 (`[1]`) do vetor de resposta; na segunda linha, o número **36** é elemento se refere à posição 18 (`[18]`) do vetor de resposta e assim por diante, até a última linha que começa no elemento de posição 86.
+Neste exemplo, o R optou por quebrar a multiplicação dos 100 números em grupos de 17 números nas 4 primeiras linhas e num grupo de 15 valores na última. Na primeira linha deste _output_, **2** é o elemento na posição 1 (`[1]`) do vetor de resposta; na segunda linha, o número **36** é elemento se refere à posição 18 (`[18]`) do vetor de resposta e assim por diante, até a última linha que começa no elemento de posição 89.
 
 
 ### Operadores Lógicos

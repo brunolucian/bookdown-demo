@@ -31,6 +31,9 @@ description: "Livro texto que acompanha o Curso Introdutório de Análise de Dad
 
 # Prefácio {-}
 
+```{r, message=FALSE, warning=FALSE, comment=FALSE, echo=FALSE}
+library(tidyverse)
+```
 
 Este curso é oferecido pela Escola de Gestão & Politicas Públicas da Fundação CEPERJ. A Fundação CEPERJ é uma instituição com mais de meio século de tradição,  história e é reconhecidamente um legítimo centro de capacitação, recrutamento, cultura, e produção de estatísticas e de estratégia de políticas públicas para o estado do Rio de Janeiro.
 
