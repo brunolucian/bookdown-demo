@@ -6,5 +6,7 @@ delete_merged_file: true
 rmd_files: ["index.Rmd", "01-intro.Rmd",
 "02-ReadWriteData.Rmd",
 "03-ProgramacaoBasica.Rmd",
-"04-EDA.Rmd"
+"04-EDA.Rmd",
+"05-Graphs.Rmd",
+"06-Rmarkdown.Rmd"
 ]

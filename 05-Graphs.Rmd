@@ -52,53 +52,35 @@ A gramática de gráficos foi um conceito desenvolvido por Leland Wilkinson em 1
 
 Todos esses elementos são tratados como _layers_ e podem ser adiconadas a parte principal do gráfico utilizando-se o sinal `+`.
 
-Neste curso, veremos de forma mais detalhada os elementos *data*, *aesthetics*, *stats* e *facetting* e o que significa cada um desses elementos na estrutura da gramática de gráficos. Vamos utilizar dois _datasets_: o de produção madeireira disponibilizado pelo IBAMA e um novo, contendo uma série histórica modificada do censo escolar agregado do Instituto de Pesquisas Educacionais Anísio Teixeira (INEP). Os dados contém o número de estudantes por série de ensino, escola, munícipio e outras variáveis para o período compreendido entre 2007 e 2019, apenas para os estados do Espírito Santo, Mato Grosso do Sul e Roraima.
+Neste curso, veremos de forma mais detalhada os elementos *data*, *aesthetics*, *stats* e *facetting* e o que significa cada um desses elementos na estrutura da gramática de gráficos.
 
-Como o arquivo do Censo Escolar está no formato `.csv` pt-br (separado por `;`), podemos utilizar a função `read_csv2()` do pacote `readr`.
+Uma forma geral (template) para entender-se a estrutura do ggplot2, segundo o próprio Hadley Wickhan, no livro R for Data Science, é a seguinte:
 
-```{r, message=FALSE}
-library(readr) # para ler os dados
-library(magrittr) # vamos usar pipe %>%
-library(ggplot2) # para fazer os gráficos
-# leitura
-tb_censo_escolar <- read_csv2(file="https://raw.githubusercontent.com/allanvc/book_IADR-T/master/datasets/tab_censo_sample_ES_MS_RR.csv")
+```{r, eval=FALSE}
+
+ggplot(data = <DATA>) + 
+  <GEOM_FUNCTION>(
+     mapping = aes(<MAPPINGS>),
+     stat = <STAT>, 
+     position = <POSITION>,
+     data = <DATA> # pode receber os dados diretamente
+  ) +
+  <SCALE_FUNCTION> + # uma para cada elemento estético
+  <COORDINATE_FUNCTION> +
+  <FACET_FUNCTION> # dividir o gráfico em subplots
+  
 ```
 
-Caso, você não possua mais a `tb_ibama2` em sua sessão do R, carregue a tabela original e fça novamente as alterações que fizemos nas seções anteriores
+É importante salientar que apesar dos dados estarem na função `ggplot() (<DATA>)`, eles também podem ser incluídos diretamente em cada objeto geométrico. Quando for necessário criar-se uma nova camada a partir de dados diferentes daqueles que estão inicialmente nos gráficos está propriedade se mostrará muito útil.
 
-```{r, message=FALSE, eval=FALSE}
-library(dplyr)
-tb_ibama <- read_csv(file="https://raw.githubusercontent.com/allanvc/book_IADR-T/master/datasets/PA%20GF%202017%20jan-jun_editada.csv",
-                     col_types = cols(
-                       X1 = col_double(),
-                       TIPO_GF = col_character(),
-                       STATUS_GF = col_character(),
-                       UF_REMETENTE = col_character(),
-                       MUNICÍPIO_REMETENTE = col_character(),
-                       TIPO_DESTINO = col_character(),
-                       CEPROF_DESTINATÁRIO = col_character(),
-                       UF_DESTINATÁRIO = col_character(),
-                       MUNICÍPIO_DESTINATÁRIO = col_character(),
-                       N_AUTORIZAÇÃO = col_character(),
-                       PROCESSO = col_character(),
-                       EMISSAO = col_integer(),
-                       NOME_CIENTÍFICO = col_character(),
-                       PRODUTO = col_character(),
-                       VOLUME = col_double(),
-                       UNID = col_character(),
-                       PRECO_TOTAL = col_double()
-                       )
-                     )
-tb_ibama$STATUS_GF[1:50000] <- rep("NÃO VERIFICADO", 50000)
-tb_ibama2 <- mutate(tb_ibama,
-  preco_unidade = PRECO_TOTAL / VOLUME,
-  preco_unidade_vezes_1000 = preco_unidade * 1000
-)
-```
+A ideia é que todo gráfico pode ser representado por essa forma. Porém na criação de um gráfico, não é obrigatório especificar-se todas as partes acima. O `ggplot2` já oferece um padrão para o sistema de coordenadas, para o `stat`, `position` e `facet` (subplot) só será utilizado quando necessário.
+
+Para, exemplificar vamos utilizar os _datasets_ utilizados no Módulo IV, carregue a tabelas originais com seus devidos comandos já mencionados. 
+
 
 ## Data (Dados)
 
-Os dados utilizados com as funções de `ggplot2` **DEVEM** ser armazenados como um tibble ou dataframe. Há possibilidade, inclusive, de se usar mais de um dataframe em um gráfico. A recomendação é que se defina e se certifique acerca dos tipos das variáveis (_numeric_, _factor_, etc) antes de começar a construir um gráfico
+Os dados utilizados com as funções de `ggplot2` **DEVEM** ser armazenados como um tibble ou dataframe. Há possibilidade, inclusive, de se usar mais de um dataframe em um gráfico. A recomendação é que se defina e se certifique acerca dos tipos das variáveis antes de começar a construir um gráfico
 
 ## A função `ggplot()`
 
@@ -132,57 +114,46 @@ Variáveis são mapeadas para os **aesthetics**, o que significa que são traduz
 
 Para fazermos um gráfico, primeiro precisamos indicar os dados e fazer o mapeamento das variáveis aos **aesthetics**. Isso reserva uma área de gráfico a ser utilizada.
 
-```{r, fig.align="center"}
-options(scipen= 999) # para enalizar a exibição em notação exponencial
-# ggplot(data=tb_ibama2, mapping = aes(x=VOLUME, y=PRECO_TOTAL))
-# OU
-tb_ibama2 %>%
-  ggplot(data=tb_ibama2, mapping = aes(x=VOLUME, y=PRECO_TOTAL))
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
+require(tidyverse)
+tb_game_sales <- read_csv("https://raw.githubusercontent.com/brunolucian/cursoBasicoR/master/datasets/vgsales.csv")
+
 ```
 
-Vejamos um primeiro exemplo para o cruzamento entre _VOLUME_ vs _PRECO_TOTAL_.
 
 ```{r, fig.align="center"}
-tb_ibama2 %>%
-  ggplot(mapping = aes(x=VOLUME, y=PRECO_TOTAL))+
+library(ggplot2)
+
+ggplot(data=tb_game_sales, mapping = aes(x = Genre , y=NA_Sales))
+```
+
+Vejamos um primeiro exemplo para o cruzamento entre _Genre_ vs _NA_Sales_.
+
+```{r, fig.align="center"}
+tb_game_sales %>%
+  ggplot(mapping = aes(x=Genre, y=NA_Sales))+
   geom_point()
 ```
-
 
 Note que não houve a necessidade de re-especificar os argumentos `data` e `aes()` para a função `geom_point()`.
 
-Poderíamos melhorar nosso gráfico adicionando cores dentro de `aes()`. Isso acrescentaria mais informação. Poderíamos atribuir cores diferentes para cada tipo de destino das toras de madeira:
+Poderíamos melhorar nosso gráfico adicionando cores dentro de `aes()`. Isso acrescentaria mais informação.
 
 ```{r, fig.align="center"}
-tb_ibama2 %>%
-  ggplot(mapping = aes(x=VOLUME, y=PRECO_TOTAL))+
-  geom_point(aes(color=TIPO_DESTINO))
-# ou
-# tb_ibama2 %>%
-#   ggplot(mapping = aes(x=VOLUME, y=PRECO_TOTAL, color=TIPO_DESTINO))+
-#   geom_point()
+tb_game_sales %>%
+  ggplot(mapping = aes(x=Genre, y=NA_Sales))+
+  geom_point(aes(color=Platform))
+
 ```
 
-Podemos atribuir diferentes intensidades aos pontos, dependendo do valor de uma terceira variável (de preferência contínua entre 0 e 1), utilizando o argumento `alpha`. Como no nosso dataset do IBAMA, não temos tal variável, vamos criar uma variável contínua por meio da simulação de valores dentro de uma distribuição de probabilidade Normal ($N(0,1)$):
-
-```{r, fig.align="center"}
-# simulando valores
-tb_ibama2 <- tb_ibama2 %>%
-  mutate(quant_sim = rnorm(n()),
-         prob_sim = pnorm(quant_sim)
-  )
-tb_ibama2 %>%
-  ggplot(mapping = aes(x=VOLUME, y=PRECO_TOTAL, alpha=prob_sim))+
-  geom_point()
-```
-
-Neste nosso caso, esse gráfico não é muito útil porque temos vários pontos sobrepostos e isto dificulta a percepção de como as cores estão variando. No entanto, serve para ilustrar essa possibilidade com `ggplot2`.
 
 Uma melhor forma de demonstrar os diferentes tipos de destino seria utilizar diferentes formas (argumento `shape`):
 
 ```{r, fig.align="center"}
-tb_ibama2 %>%
-  ggplot(mapping = aes(x=VOLUME, y=PRECO_TOTAL, shape=TIPO_DESTINO))+
+tb_game_sales %>%
+  filter(Platform %in% c("Wii", "X360","PS3","PS4","N64")) %>% 
+  ggplot(mapping = aes(x=Genre, y=NA_Sales, shape=Platform))+
   geom_point()
 ```
 
@@ -196,16 +167,18 @@ Quando vamos mapear um **aesthetic**, as variáveis são passadas **dentro** de 
 Vejamos os exemplos anteriores com um _aesthetic_ constante para cor e shape:
 
 ```{r, fig.align="center"}
-tb_ibama2 %>%
-  ggplot(mapping = aes(x=VOLUME, y=PRECO_TOTAL))+
+tb_game_sales %>% 
+  filter(Platform %in% c("PS", "PS2", "PS3", "PS4")) %>% 
+  ggplot(mapping = aes(x=Genre, y=NA_Sales))+
   geom_point(color = "red")
 ```
 
 
 
 ```{r, fig.align="center"}
-tb_ibama2 %>%
-  ggplot(mapping = aes(x=VOLUME, y=PRECO_TOTAL))+
+tb_game_sales %>% 
+  filter(Platform %in% c("PS", "PS2", "PS3", "PS4")) %>% 
+  ggplot(mapping = aes(x=Genre, y=NA_Sales))+
   geom_point(shape = 2)
 ```
 
@@ -213,7 +186,7 @@ Note que devemos passar as constantes para `geom_point()` (fora de `aes()`) - o 
 
 Veja quantos _shapes_ podemos *usar* no **R**:
 
-```{r, fig.align="center"}
+```{r, fig.align="center", echo=FALSE}
 d=data.frame(p=c(0:25,32:127))
 ggplot() +
   scale_y_continuous(name="") +
@@ -224,15 +197,6 @@ ggplot() +
 # http://sape.inf.usi.ch/quick-reference/ggplot2/shape
 ```
 
-Cuidado ao setar uma _aesthetic_ como constante dentro de `aes()`, pois isso pode resultar em um comportamento inesperado.
-
-```{r, fig.align="center"}
-tb_ibama2 %>%
-  ggplot(mapping = aes(x=VOLUME, y=PRECO_TOTAL)) +
-  geom_point(aes(color = "green"))
-```
-
-Embora tenhámos setado a cor como `"green"`, o fato de termos feito dentro de `aes()` faz com que o `ggplot`
 
 ### Geoms
 
@@ -245,24 +209,27 @@ Para obter ajuda digite `?geom_x`.
 **_geoms_ para uma variável numérica (contínua de preferência)**
 
 ```{r, fig.align="center"}
-c <- tb_ibama2 %>%
-  ggplot(mapping = aes(x=quant_sim))
+p <- tb_game_sales %>% 
+  filter(Platform %in% c("PS", "PS2", "PS3", "PS4")) %>% 
+  ggplot(mapping = aes(x=NA_Sales))
 ```
 
 **DICA:** Note que podemos atribuir o resultado do gráfico a um objeto no R e acrescentar outras _layers_ posteriormente.
 
 
 ```{r, fig.align="center"}
-c + geom_density()
-c + geom_histogram()
+p + geom_density()
+p + geom_histogram()
 ```
 
 **_geoms_ para uma variável numérica discreta**
 
 ```{r, fig.align="center"}
 # contagem
-tb_ibama2 %>%
-  ggplot(mapping = aes(x=TIPO_GF))+
+tb_game_sales %>% 
+  mutate(Year = as.integer(Year)) %>% 
+  filter(Platform %in% c("PS3", "PS4")) %>% 
+  ggplot(mapping = aes(x = Year)) +
   geom_bar()
 ```
 
@@ -271,41 +238,48 @@ tb_ibama2 %>%
 `geom_point()` tambpem pode ser usado neste caso:
 
 ```{r, fig.align="center"}
-e <- tb_ibama2 %>%
-  ggplot(mapping=aes(x=VOLUME, y=PRECO_TOTAL))
-e + geom_point()
+
+p <- tb_game_sales %>% 
+  filter(Platform %in% c("PS", "PS2", "PS3", "PS4")) %>% 
+  ggplot(mapping = aes(x=Global_Sales, y=NA_Sales))
+
+p + geom_point()
+
 ```
 
 **_geoms_ para duas variáveis (uma discreta e uma contínua)**
 
 
 ```{r, fig.align="center"}
-f <- tb_ibama2 %>%
-  ggplot(mapping=aes(TIPO_GF, quant_sim))
-f + geom_boxplot()
-f + geom_violin()
+p <- tb_game_sales %>% 
+  filter(Platform %in% c("PS", "PS2", "PS3", "PS4"), Genre %in% c("Action","Racing","Shooter","Role-Playing","Sports"  )) %>% 
+  ggplot(mapping = aes(x=Genre, y=NA_Sales))
+
+p + geom_boxplot()
+p + geom_violin()
 ```
 
 **_geoms_ para gráficos de linha**
 
-Neste ponto, vamos trocar de _dataset_. Passaremos a utilizar agora o dataset `tb_censo_escolar`. Faremos algumas transformações com `dplyr` e seguiremos direto para o plot usando pipe `%>%`.
-
 ```{r, fig.align="center"}
-tb_censo_escolar %>%
-  group_by(SG_UF, NU_ANO_CENSO) %>%
-  summarise(QTD_TOTAL = sum(QTD_ALUNOS, na.rm = TRUE)) %>%
-  ggplot(mapping=aes(NU_ANO_CENSO, QTD_TOTAL, colour=SG_UF))+
-  geom_line()
+
+tb_game_sales %>% 
+  group_by(Year) %>% 
+  summarise(media_global = mean(Global_Sales)) %>% ungroup() %>% 
+  ggplot(mapping = aes(x=Year, y=media_global, group = 1))+
+    geom_line()
 ```
 
 No caso de gráficos de linhas, ao invés usar cores diferentes, poderíamos ainda alterar o tipo de linha conforme as categorias de uma 3ª variável, por meio do argumento `linetype`:
 
 ```{r, fig.align="center"}
-tb_censo_escolar %>%
-  group_by(SG_UF, NU_ANO_CENSO) %>%
-  summarise(QTD_TOTAL = sum(QTD_ALUNOS, na.rm = TRUE)) %>%
-  ggplot(mapping=aes(NU_ANO_CENSO, QTD_TOTAL, linetype=SG_UF))+
-  geom_line()
+tb_game_sales %>%
+  filter(Platform %in% c("PS", "PS2", "PS3", "PS4")) %>% 
+  group_by(Year, Platform) %>% 
+  summarise(media_global = mean(Global_Sales)) %>% 
+  ggplot(mapping = aes(x=Year, y=media_global, linetype = Platform, group = Platform))+
+    geom_line()
+
 ```
 
 **DICA:** Há também outros _geoms_ que você encontrará na página de ajuda.
@@ -320,46 +294,47 @@ Os ajustes de posição definirão como os _geoms_ se localizam no gráfico, de 
 -`position="stacked` é o ajuste padrão de `geom_point()`. Ela coloca cada objeto na posição exata do contexto do gráfico. No caso de gráficos de barras, teríamos barras acumuladas (_stacked_):
 
 ```{r, fig.align="center"}
-# tb_censo_escolar %>%
-#   ggplot(mapping=aes(x=SG_UF, fill=factor(CO_ETAPA_ENSINO)))+
-#   geom_bar(position="stack")
-# precisa passar CO_ETAPA_ENSINO como factor, senao ele lê como numerica
-tb_censo_escolar %>%
-  ggplot(mapping=aes(x=SG_UF, fill=factor(NU_ANO_CENSO)))+
-  geom_bar(position="stack") # ou simplemente geom_bar()
+tb_game_sales %>% 
+  filter(Platform %in% c("PS3", "PS4"), 
+         Genre %in% c("Action","Racing")) %>% 
+  ggplot(mapping = aes(x = Platform, y = Global_Sales, fill = Genre)) +
+  geom_bar(stat = "identity", position="stack")
+
 ```
 
-**DICA:** Note que _forçamos_ a variável _NU_ANO_CENSO_ como um _factor_, para que o R a trate como uma variável categórica e não como uma data para realizar a plotagem. Um _factor_ é uma abstração que o R faz para armazenas variáveis categóricas de mod mais eficiente na memória do computador. Para cada valor ele cria um _level_ numérico. É muito mais eficiente guardar um número do que um nome ou uma data, por exemplo.
-
-- **position = "dodge"** coloca objetos sobrepostos um ao lado de outro. Nesse caso, teremos barras justapostas:
+**DICA:** **position = "dodge"** coloca objetos sobrepostos um ao lado de outro. Nesse caso, teremos barras justapostas:
 
 ```{r, fig.align="center"}
-gg_barras <- tb_censo_escolar %>%
-  ggplot(mapping=aes(x=SG_UF, fill=factor(NU_ANO_CENSO)))+
-  geom_bar(position="dodge")
+p_dodge <- tb_game_sales %>% 
+  filter(Platform %in% c("PS3", "PS4"), 
+         Genre %in% c("Action","Racing")) %>% 
+  ggplot(mapping = aes(x = Platform, y = Global_Sales, fill = Genre)) +
+  geom_bar(stat = "identity", position="dodge")
 ```
 
 **DICA:** Se voce quiser inverter as coordenadas do gráfico, pode fazer isso trocando os parâmetros `x` e `y` e em `aes()`, ou utilizando a função `coord_flip()`:
 
 ```{r, fig.align="center"}
-gg_barras + coord_flip()
+p_dodge + coord_flip()
 ```
 
 - **position="fill"** também empilhará os elementos, mas irá normalizar a altura de todas as barras para que fiquem na mesma escala. Isso torna mais fácil comparar as proporções entre os grupos:
 
 ```{r, fig.align="center"}
-tb_censo_escolar %>%
-  ggplot(mapping=aes(x=SG_UF, fill=factor(NU_ANO_CENSO)))+
-  geom_bar(position="fill")
+tb_game_sales %>% 
+  filter(Platform %in% c("PS3", "PS4"), 
+         Genre %in% c("Action","Racing")) %>% 
+  ggplot(mapping = aes(x = Platform, y = Global_Sales, fill = Genre)) +
+  geom_bar(stat = "identity", position="fill")
 ```
 
 
-- **position="jitter"** é útil para gráficos de dispersão, pois hpa um problema muito comum neste tipo de gráfico que é a sobreposição de pontos (*overplotting*). Com *jitter*, *ggplot2* adiciona um ruído aleatório nas posições de X e Y para que eles não se sobreponham:
+- **position="jitter"** é útil para gráficos de dispersão, pois há um problema muito comum neste tipo de gráfico que é a sobreposição de pontos (*overplotting*). Com *jitter*, *ggplot2* adiciona um ruído aleatório nas posições de X e Y para que eles não se sobreponham:
 
 ```{r, fig.align="center", fig.height=2, fig.width=3, warning=TRUE}
-# mpg %>%
-#   ggplot(mapping=aes(x=displ, y=hwy))+
-#            geom_point(position="jitter")
+mpg %>%
+  ggplot(mapping=aes(x=displ, y=hwy))+
+           geom_point(position="jitter")
 ```
 Há outros ajustes de posição bem úteis, como:
 
@@ -374,32 +349,36 @@ Há duas funções que permitem criar facetas: `facet_wrap()` e `facet_grid()`.
 
 Tanto **facet_wrap** quanto **facet_grid** permitem a divisão do plot da(s) variável(is) passadas em `aes()` de acordo com as categorias de uma 3ª ou 3ª e 4ª variáveis.
 
-Voltaremos aos exemplos com a base modificada do IBAMA `tb_ibama2`. Usaremos o log do volume apenas para que os valores dos eixos não se sobreponham. Embora seja possível ajustar isso com as funções de `ggplot2`, por uma questão de priorização e espaço optamos por não abordar essa funcionalidade nesta apostila.
+
 
 ```{r, fig.align="center"}
-tb_ibama2 %>%
-  ggplot()+
-  geom_point(mapping=aes(x=log(VOLUME), y=PRECO_TOTAL))+
-  facet_wrap(TIPO_GF ~ UF_DESTINATÁRIO, nrow = 4)
+tb_game_sales %>% 
+  filter(Year > 2010) %>% 
+  group_by(Year, Platform) %>% 
+  summarise(media_global = mean(Global_Sales)) %>%
+  ggplot(mapping = aes(x=Year, y=media_global, group = 1))+
+    geom_line() +
+  facet_wrap(~ Platform)
 ```
 
-Note acima que podemos definir o número de linhas desejado para plotagem com o argumento `nrow` ou o número de colunas com `ncol` e automaticamente o outro argumento será determinado. O símbolo `~` é muito utilizado no **R**. Nesse casos significa as variáveis de `aes()` serão plotadas em função das variáveis `STATUS_GF` e `TIPO_DESTINO`, ou seja, para cada combinação das categorias destas variáveis, será feito um plot com as variáveis passadas em `aes()`. Note que o arranjo das combinações das categorias `STATUS_GF` e `TIPO_DESTINO` são passadas nas colunas de gráficos, como se fossem os títulos de cada plot específico.
+Note acima que podemos definir o número de linhas desejado para plotagem com o argumento `nrow` ou o número de colunas com `ncol` e automaticamente o outro argumento será determinado. O símbolo `~` é muito utilizado no **R**. Nesse casos significa as variáveis de `aes()` serão plotadas em função das variáveis `Platform`
 
-No caso de `facet_grid()`, a organização do _output_ será um pouco diferente. Será feito, como o próprio nome da função diz, um _grid_. Onde as linhas dirão respetio a uma das variáveis e a coluna à outra variável. É como se fosse um jogo de batalha naval, é uma matriz de pequenos gráficos. Como resultado, você verá que há cruzamentos entre as variáveis _TIPO_DESTINO_ e _STATUS_GF_ que resultam em um gráfico vazio por ausência de dados que estejam naquelas respectivas categorias das duas variáveis. No caso anterior, com `facte_wrap()` isso não ocorre.
+No caso de `facet_grid()`, a organização do _output_ será um pouco diferente. Será feito, como o próprio nome da função diz, um _grid_. Onde as linhas dirão respetio a uma das variáveis e a coluna à outra variável. É como se fosse um jogo de batalha naval, é uma matriz de pequenos gráficos. No caso anterior, com `facte_wrap()` isso não ocorre.
 
 
 ```{r, fig.align="center"}
-tb_ibama2 %>%
-  ggplot()+
-  geom_point(mapping=aes(x=log(VOLUME), y=PRECO_TOTAL))+
-  facet_grid(TIPO_GF ~ UF_DESTINATÁRIO)
+tb_game_sales %>% 
+  filter(Year > 2010) %>% 
+  group_by(Year, Platform) %>% 
+  summarise(media_global = mean(Global_Sales)) %>%
+  ggplot(mapping = aes(x=Year, y=media_global, group = 1))+
+    geom_line() +
+  facet_grid( ~ Platform)
 ```
 
 
 
 ## Títulos, rótulos, temas e legendas
-
-USAR R4DS (para o Markdown tb)
 
 
 Há duas formas de alterar títulos e rótulos dos eixos em `ggplot2`. Você pode optar por `ggtitle("título do gráfico")`, `xlab("rótulo eixo x")`, `ylab("rótulo eixo y")`. Ou então, pode usar `labs()`. No caso, de usar labs, você pode alterar todos esses campos e outros, como o de legenda dentro da mesma função.
@@ -408,21 +387,16 @@ Note, no entanto, que o parâmetro que controla o título da legenda muda depend
 
 
 ```{r, fig.align="center"}
-tb_ibama2 %>%
-  ggplot()+
-  geom_point(mapping=aes(x=VOLUME, y=PRECO_TOTAL, colour=TIPO_GF))+
+ tb_game_sales %>% 
+  filter(Platform %in% c("PS3", "PS4"), 
+         Genre %in% c("Action","Racing")) %>% 
+  ggplot(mapping = aes(x = Platform, y = Global_Sales, fill = Genre)) +
+  geom_bar(stat = "identity", position="dodge") +
   labs(title="Título do gráfico",
        x = "Rótulo eixo x",
        y = "Rótulo eixo y",
        colour = "Título da Legenda")
-# OU
-# tb_ibama2 %>%
-#   ggplot()+
-#   geom_point(mapping=aes(x=VOLUME, y=PRECO_TOTAL, colour=TIPO_GF))+
-#   ggtitle("Título do gráfico")+
-#   xlab("Rótulo eixo x")+
-#   ylab("Rótulo eixo y")+
-#   labs(colour="Título da legenda")
+
 ```
 
 
@@ -434,28 +408,18 @@ Há ainda funções específicas que também controlam o nome da legenda depende
 
 Dessa forma, temos: `scale_fill_discrete(name="título da legenda")`, `scale_fill_continuous(name="título da legenda")`, `scale_colour_discrete(name="título da legenda")`, `scale_colour_continuous(name="título da legenda")`, e assim por diante para os demais argumentos geradores da legenda, como `size`, `linetype`, `alpha` e `shape`.
 
-```{r, fig.align="center"}
-tb_censo_escolar %>%
-  group_by(SG_UF, NU_ANO_CENSO) %>%
-  summarise(QTD_TOTAL = sum(QTD_ALUNOS, na.rm = TRUE)) %>%
-  ggplot(mapping=aes(NU_ANO_CENSO, QTD_TOTAL, linetype=SG_UF))+
-  geom_line()+
-  scale_linetype_discrete(name="UF")
-```
-
 Podemos inclusive ter mais de um argumento de _mapping_ dentro de `aes()` e podemos controlar as legendas de cada um, adicionando mais uma camada ao gráfico:
 
 ```{r, fig.align="center"}
-tb_ibama2 %>%
-  ggplot()+
-  geom_point(mapping=aes(x=VOLUME, y=PRECO_TOTAL,
-                         size=preco_unidade,
-                         colour=TIPO_GF))+
-  ggtitle("Produção madeireira - Dados IBAMA")+
-  xlab("Volume toras")+
-  ylab("Preço Total toras")+
-  scale_size_continuous(name="Preço por unidade de volume")+
-  scale_colour_discrete(name="Grupo")
+ tb_game_sales %>% 
+  filter(Platform %in% c("PS3", "PS4"), 
+         Genre %in% c("Action","Racing")) %>% 
+  ggplot(mapping = aes(x = Platform, y = Global_Sales, fill = Genre)) +
+  geom_bar(stat = "identity", position="dodge") +
+  ggtitle("Volume de Vendas Globais \npor genero para PS3, PS4")+
+  xlab("Plataforma")+
+  ylab("Sales Value")+
+  scale_fill_discrete(name="Genero")
 ```
 
 
@@ -467,50 +431,31 @@ Você deve ter notado, que na maioria dos gráficos, o `ggplot2` utiliza cores p
 O modo de alterar a paleta de cores utilizadas em um argumento de _mapping_ dentro de `aes()` é por meio de funções do tipo `scale_GERADOR_manual()`, alterando-se o parâmetro `values`.
 
 ```{r, fig.align="center"}
-tb_ibama2 %>%
-  ggplot()+
-  geom_point(mapping=aes(x=VOLUME, y=PRECO_TOTAL,
-                         size=preco_unidade,
-                         colour=TIPO_GF))+
-  ggtitle("Produção madeireira - Dados IBAMA")+
-  xlab("Volume toras")+
-  ylab("Preço Total toras")+
-  scale_size_continuous(name="Preço por unidade de volume")+
-  scale_colour_manual(values=c("red", "blue", "green", "orange", "yellow"))
+ tb_game_sales %>% 
+  filter(Platform %in% c("PS3", "PS4"), 
+         Genre %in% c("Action","Racing")) %>% 
+  ggplot(mapping = aes(x = Platform, y = Global_Sales, fill = Genre)) +
+  geom_bar(stat = "identity", position="dodge") +
+  ggtitle("Volume de Vendas Globais \npor genero para PS3, PS4")+
+  xlab("Plataforma")+
+  ylab("Sales Value")+
+  scale_fill_manual(name="Genero", values=c("blue", "yellow"))
 ```
 
 
 Por meio dessas mesmas funções do tipo de funções do tipo `scale_GERADOR_manual()`, podemos alterar também os rótulos das categorias exibidas na legenda utilizando o argumento `labels`.
 
 ```{r, fig.align="center"}
-tb_ibama2 %>%
-  ggplot()+
-  geom_point(mapping=aes(x=VOLUME, y=PRECO_TOTAL,
-                         size=preco_unidade,
-                         colour=TIPO_GF))+
-  ggtitle("Produção madeireira - Dados IBAMA")+
-  xlab("Volume toras")+
-  ylab("Preço Total toras")+
-  scale_size_continuous(name="Preço por unidade de volume")+
-  scale_colour_manual(values=c("red", "blue", "green", "orange", "yellow"),
-                      labels=c("tipo1", "tipo2", "tipo3", "tipo4", "tipo5"))
-```
-
-Como menicionamos várias vezes atpe este ponto do curso, no **R** existem várias formas de fazer uma mesma coisa. As funções do tipo `scale_GERADOR_manual()` também permite alterar o título da legenda com o argumento `name`:
-
-```{r, fig.align="center"}
-tb_ibama2 %>%
-  ggplot()+
-  geom_point(mapping=aes(x=VOLUME, y=PRECO_TOTAL,
-                         size=preco_unidade,
-                         colour=TIPO_GF))+
-  ggtitle("Produção madeireira - Dados IBAMA")+
-  xlab("Volume toras")+
-  ylab("Preço Total toras")+
-  scale_size_continuous(name="Preço por unidade de volume")+
-  scale_colour_manual(values=c("red", "blue", "green", "orange", "yellow"),
-                      labels=c("tipo1", "tipo2", "tipo3", "tipo4", "tipo5"),
-                      name="Grupo")
+ tb_game_sales %>% 
+  filter(Platform %in% c("PS3", "PS4"), 
+         Genre %in% c("Action","Racing")) %>% 
+  ggplot(mapping = aes(x = Platform, y = Global_Sales, fill = Genre)) +
+  geom_bar(stat = "identity", position="dodge") +
+  ggtitle("Volume de Vendas Globais \npor genero para PS3, PS4")+
+  xlab("Plataforma")+
+  ylab("Sales Value")+
+  scale_fill_manual(name="Genero", values=c("red", "blue"),
+                      labels=c("Ação", "Corrida"))
 ```
 
 ## Área de Plotagem e Tema
@@ -537,15 +482,21 @@ Nesta seção traremos apenas algumas funções do `ggplot2` que trazem alguns t
 
 
 ```{r, fig.align="center"}
-tb_ibama2 %>%
-  ggplot()+
-  geom_point(mapping=aes(x=VOLUME, y=PRECO_TOTAL, colour=TIPO_GF))+
-  labs(title="Título do gráfico", x = "Rótulo eixo x", y = "Rótulo eixo y", colour = "Título da Legenda")+
+ tb_game_sales %>% 
+  filter(Platform %in% c("PS3", "PS4"), 
+         Genre %in% c("Action","Racing")) %>% 
+  ggplot(mapping = aes(x = Platform, y = Global_Sales, fill = Genre)) +
+  geom_bar(stat = "identity", position="dodge") +
+  ggtitle("Volume de Vendas Globais \npor genero para PS3, PS4")+
+  xlab("Plataforma")+
+  ylab("Sales Value")+
+  scale_fill_manual(name="Genero", values=c("red", "blue"),
+                      labels=c("Ação", "Corrida"))+
   theme_bw()
 ```
 
 
-**DICA:** Estranhamente, `ggplot2` alinha o título do gráfico sempre à esquerda. Você pode centralizar o título usando justamente a função `theme()`, que comentamos mais acima, escrevendo `theme(plot.title = element_text(hjust=0.5)`. `0.5` indica que o título deve ficar no meio do gráfico, conforme alinhamento horizontal especificado (parâmetro `hjust`). `element_text()` é uma _helper function_ que serve para controlar aspectos textuais como tamanho (`size`) e outros parâmetros como o próprio alinhamento horizontal.
+**DICA:** O `ggplot2` alinha o título do gráfico sempre à esquerda. Você pode centralizar o título usando justamente a função `theme()`, que comentamos mais acima, escrevendo `theme(plot.title = element_text(hjust=0.5)`. `0.5` indica que o título deve ficar no meio do gráfico, conforme alinhamento horizontal especificado (parâmetro `hjust`). `element_text()` é uma _helper function_ que serve para controlar aspectos textuais como tamanho (`size`) e outros parâmetros como o próprio alinhamento horizontal.
 
 ***
 

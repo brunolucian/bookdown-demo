@@ -1,5 +1,12 @@
 # Módulo III {#m3}
 
+Script da aula do Módulo III abaixo.
+```{r, echo=FALSE}
+xfun::embed_file('scripts/Aula3.R')
+```
+
+
+
 ## Controle de Fluxo
 
 Os controles de fluxo são operações definidas em todas as linguagens de programação, como por exemplo Python, C, C++, Java, Fortran, Pascal, etc. Como não podia deixar de ser, tais operações também estão definidas dentro da linguagem R.

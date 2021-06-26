@@ -1,5 +1,11 @@
 # Módulo IV  {#m4}
 
+Script da aula do Módulo IV abaixo.
+```{r, echo=FALSE}
+xfun::embed_file('scripts/aula4.R')
+```
+
+
 ## Manipulação de dados com `dplyr`
 
 Nesta seção, trataremos do pacote `dplyr`, que é um dos pacotes mais importantes da coleção _tidyverse_. Ele traz uma "gramática" específica de manipulação de dados, provendo um conjunto de funções que ajudam a resolver os desafios mais comuns na manipulação de dados. O objetivo é que você se familiarize com as funções do pacote `dplyr`; com as tarefas que elas executam; e veja exemplos de como aplicá-las a *data.frames*.
@@ -7,6 +13,65 @@ Nesta seção, trataremos do pacote `dplyr`, que é um dos pacotes mais importan
 <!-- Além das funções básicas de **dplyr**, teremos um enfoque na utilização do pacote **dplyr** para trabalhar com bancos de dados relacionais **SQL** em conjunto com os pacotes **DBI** e **dbplyr**. -->
 
 <!-- Serão utilizados os conteúdos dos *vignettes* dos pacotes **dplyr** e **dbplyr** disponíveis no próprio **R** e em http://dplyr.tidyverse.org/articles/dplyr.html e http://dbplyr.tidyverse.org/articles/dbplyr.html. -->
+
+Para tanto vamos utilizar três _datasets_ que vamos citar e descrever abaixo: 
+
+* Chess game dataset
+
+Este é um conjunto de pouco mais de 20.000 jogos coletados de uma seleção de usuários no site `Lichess.org`.
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(readr)
+```
+
+```{r, eval=F}
+
+tb_chess_game <- read_csv(file="https://raw.githubusercontent.com/brunolucian/cursoBasicoR/master/datasets/chess_games.csv")
+
+
+```
+
+
+```{r, echo=FALSE}
+
+tb_chess_game <- read_csv(file="https://raw.githubusercontent.com/brunolucian/cursoBasicoR/master/datasets/chess_games.csv")
+
+tb_chess_game
+
+```
+
+
+
+* Netflix dataset
+
+Programas de TV e filmes listados no Netflix
+Este conjunto de dados consiste em programas de TV e filmes disponíveis no Netflix a partir de 2019. O conjunto de dados é coletado do Flixable, um mecanismo de busca Netflix de terceiros.
+
+Em 2018, eles lançaram um relatório interessante que mostra que o número de programas de TV na Netflix quase triplicou desde 2010. O número de filmes do serviço de streaming diminuiu em mais de 2.000 títulos desde 2010, enquanto seu número de programas de TV quase triplicou. Será interessante explorar o que todos os outros insights podem ser obtidos no mesmo conjunto de dados.
+
+
+```{r, eval=FALSE}
+tb_netflix <- read_csv("https://raw.githubusercontent.com/brunolucian/cursoBasicoR/master/datasets/netflix_titles.csv")
+```
+
+```{r, echo=FALSE}
+tb_netflix <- read_csv("https://raw.githubusercontent.com/brunolucian/cursoBasicoR/master/datasets/netflix_titles.csv")
+
+tb_netflix
+```
+
+* Games sales dataset
+
+Este conjunto de dados contém uma lista de videogames com vendas superiores a 100.000 cópias.
+
+```{r, eval=FALSE}
+tb_game_sales <- read_csv("https://raw.githubusercontent.com/brunolucian/cursoBasicoR/master/datasets/vgsales.csv")
+```
+
+```{r, echo=FALSE}
+tb_game_sales <- read_csv("https://raw.githubusercontent.com/brunolucian/cursoBasicoR/master/datasets/vgsales.csv")
+
+tb_game_sales
+```
 
 
 Conforme os próprios autores do pacote apontam, quando trabalhamos com dados, nós precisamos:
@@ -19,7 +84,7 @@ Conforme os próprios autores do pacote apontam, quando trabalhamos com dados, n
 
 O pacote `dplyr` torna estes passos mais rápidos e fáceis de executar, pois:
 
-- ao invés de disponibilizar uma imensidão de funções, igual temos no *R base* e outros pacotes, ele restringe nossas opções e com isso nos ajuda a reciocinar de forma mais direta sobre o que desejamos e podemos fazer com os dados;
+- ao invés de disponibilizar uma imensidão de funções, igual temos no *R base* e outros pacotes, ele restringe nossas opções e com isso nos ajuda a raciocinar de forma mais direta sobre o que desejamos e podemos fazer com os dados;
 
 - provém "verbos" (ou funções) mais simples, ou seja, funções que correspondem às tarefas mais comuns de manipulação de dados, ajudando-nos assim a traduzir pensamentos em código;
 
@@ -41,11 +106,10 @@ O pacote  `dplyr` proporciona uma função para cada "verbo" considerado importa
 
 Veremos agora alguns exemplos de aplicação destas funções.
 
-Vamos utilizar o mesmo dataset sobre produção madeireira que utilizamos na seção de leitura e exportação de dados. Ele possui 100.000 mil linhas e 17 colunas.
 
 ```{r, message=FALSE}
 library(dplyr)
-dim(tb_ibama)
+
 ```
 
 
@@ -57,13 +121,23 @@ Note que pelo _print_ que temos novamente um _tibble_, que é uma forma moderna 
 
 `filter()` permite fazer um _subset_ das linhas de um tibble/dataframe. Como todos os verbos simples de `dplyr`, o primeiro argumento será um _tibble_ (ou data.frame). O segundo argumento e os subsequentes se referem a variáveis dentro do data.frame, em que se selecionam as linhas onde a expressão é verdadeira (TRUE).
 
-Vamos selecionar todos as linhas em que o tipo de destino das madeiras é o consumidor final, na cidade de Brasil Novo:
+Vamos selecionar todos as linhas em que o jogador que estava com as peças pretas foi o vencedor da partida:
 
 ```{r}
-filter(tb_ibama, TIPO_DESTINO == "CONSUMIDOR_FINAL", MUNICÍPIO_DESTINATÁRIO == "Brasil Novo")
+filter(tb_chess_game, winner == "black")
 ```
 
-**DICA:** No `base R`, isso seria equivalente ao código: `tb_ibama[tb_ibama$TIPO_DESTINO == "CONSUMIDOR_FINAL" & tb_ibama$MUNICÌPIO_DESTINATÁRIO == "Brasil Novo", ]`.
+```{r}
+filter(tb_chess_game, winner == "black", black_rating < 1500)
+```
+
+```{r}
+filter(tb_chess_game, winner == "black" | opening_eco =="A10")
+```
+
+
+
+<!-- **DICA:** No `base R`, isso seria equivalente ao código: `tb_ibama[tb_ibama$TIPO_DESTINO == "CONSUMIDOR_FINAL" & tb_ibama$MUNICÌPIO_DESTINATÁRIO == "Brasil Novo", ]`. -->
 
 
 ### Ordenando linhas com `arrange()`
@@ -71,10 +145,14 @@ filter(tb_ibama, TIPO_DESTINO == "CONSUMIDOR_FINAL", MUNICÍPIO_DESTINATÁRIO ==
 `arrange()` funciona de modo semelhante a _filter_, mas ao invés de filtrar e selecionar linhas, ele apenas as reordena de acordo com alguma condição que passamos. Essa função recebe um data.frame e um conjunto de _column names_ pelo qual vai ordenar. Se você fornecer mais de um nome de coluna, cada coluna adicional passada será usada como critério de desempate.
 
 ```{r}
-arrange(tb_ibama, UF_DESTINATÁRIO, MUNICÍPIO_DESTINATÁRIO, VOLUME)
+arrange(tb_chess_game, white_rating)
 ```
 
 Se quiser ordenar de forma decrescente, utilize a função `desc(nome_da_coluna)` dentro de `arrange()`. Isso seria particularmente interessante se você quisesse ordenar os dados na coluna final do maior volume para o maior.
+
+```{r}
+arrange(tb_chess_game, desc(white_rating), desc(black_rating) )
+```
 
 
 ### Selecionando colunas com `select()`
@@ -83,33 +161,33 @@ Geralmente trabalhamos com grandes _datasets_ com muitas colunas, mas somente al
 
 ```{r}
 # Seleção por nome
-select(tb_ibama, UF_REMETENTE, MUNICÍPIO_REMETENTE, TIPO_DESTINO)
+select(tb_netflix, title, country, rating)
 # Selecionando todas as colunas num intervalo de colunas (inclusive)
-select(tb_ibama, UF_REMETENTE:TIPO_DESTINO)
-# Selecionando todas as clunas exceto aqueles em um intervalo (inclusive)
-select(tb_ibama, -(UF_REMETENTE:TIPO_DESTINO))
+select(tb_netflix, title:release_year)
+# Selecionando todas as colunas exceto aquelas em um intervalo (inclusive)
+select(tb_netflix, -(date_added:description))
 ```
 
-**DICA:** Existem _helper functions_ que podemos usar dentro de `select()`. São funções que lembram o funcionamento de uma _regular expression_ (conceito que veremos no Módulo \@ref(m3)) para identificarmos nomes de colunas que atendem a determinado critério. São muito úteis com grandes datasets: `starts_with()`, `ends_with()`, `matches()` e `contains()`.
+**DICA:** Existem _helper functions_ que podemos usar dentro de `select()`. São funções que lembram o funcionamento de uma _regular expression_ (Vamos ver no curso avançado com mais detalhes) para identificarmos nomes de colunas que atendem a determinado critério. São muito úteis com grandes datasets: `starts_with()`, `ends_with()`, `matches()` e `contains()`.
 
-Vamos por exemplo selecionar todas as colunas que começam com UF:
+Vamos por exemplo selecionar todas as colunas que começam com a letra `d`:
 
 ```{r}
-select(tb_ibama, starts_with("UF"))
+select(tb_netflix, starts_with("d"))
 ```
 
 `select()` pode ser usada inclusive para renomear variáveis:
 
 ```{r}
-select(tb_ibama, MUN_REMETENTE = MUNICÍPIO_REMETENTE)
+select(tb_netflix, listed_category = listed_in)
 ```
 
-A nova variável será chamada *MUN_REMETENTE* e receberá toda a informação da original *MUNICÍPIO_REMETENTE*.
+A nova variável será chamada *listed_category* e receberá toda a informação da original *listed_in*.
 
-No entanto, `select()` "abandona" todas as demais variáveis quando você faz uma renomeação. O melhor então é usar `rename()`:
+No entanto, `select()` "abandona" todas as demais variáveis quando você faz uma renomeação. É melhor então é usar `rename()`:
 
 ```{r}
-rename(tb_ibama, MUN_REMETENTE = MUNICÍPIO_REMETENTE)
+rename(tb_netflix,  listed_category = listed_in)
 ```
 
 
@@ -118,25 +196,29 @@ rename(tb_ibama, MUN_REMETENTE = MUNICÍPIO_REMETENTE)
 Além de selecionar conjuntos de colunas existentes, é geralmente útil adicionar novas colunas que são funções de colunas já presentes no tibble/dataframe. Veja um exemplo com `mutate()`, onde queremos calcular o preço por unidade de volume:
 
 ```{r}
-mutate(tb_ibama,
-  preco_unidade = PRECO_TOTAL / VOLUME,
+mutate(tb_game_sales,
+  part_na_sales = NA_Sales/Global_Sales,
 )
 ```
 
-``mutate()`` nos permite ainda nos referir a colunas que acabamos de criar no mesmo comando. Vamos salvar esta alteração em um novo _tibble_, chamado `tb_ibama2`
+``mutate()`` nos permite ainda nos referir a colunas que acabamos de criar no mesmo comando. Vamos salvar esta alteração em um novo _tibble_, chamado `tb_game_sales_trans`
 
 ```{r}
-tb_ibama2 <- mutate(tb_ibama,
-  preco_unidade = PRECO_TOTAL / VOLUME,
-  preco_unidade_vezes_1000 = preco_unidade * 1000
+tb_game_sales_trans <- mutate(tb_game_sales,
+  part_na_sales = NA_Sales/Global_Sales,
+  part_eu_sales = EU_Sales/Global_Sales,
+  part_jp_sales = JP_Sales/Global_Sales,
+  part_os_sales = Other_Sales/Global_Sales
 )
 ```
 
 Se só nos interessarem as novas variáveis, usaríamos *transmute()*:
 ```{r}
-transmute(tb_ibama,
-  preco_unidade = PRECO_TOTAL / VOLUME,
-  preco_unidade_vezes_1000 = preco_unidade * 1000
+transmute(tb_game_sales,
+  part_na_sales = NA_Sales/Global_Sales,
+  part_eu_sales = EU_Sales/Global_Sales,
+  part_jp_sales = JP_Sales/Global_Sales,
+  part_os_sales = Other_Sales/Global_Sales
 )
 ```
 
@@ -164,40 +246,40 @@ case_when(
 
 Geralmente, no contexto de análise de dados com `dplyr`, utilizamos `case_when()` dentro de uma função `mutate()` ou `transmute` (que traz a apenas a nova coluna criada), uma vez que pretendemos alterar as entradas de uma coluna, alterando, portanto, a própria coluna.
 
-No _tibble_ **`tb_ibama2`**, amos criar uma nova coluna de caracteres chamada `nivel_preco`, em que classificaremos um preco em: `alto` se `preco_unidade > 500`; `baixo` se `preco_unidade < 300` ou `razoavel` nos demais casos:
+No _tibble_ **`tb_games_sales`**, vamos criar uma nova coluna de caracteres chamada `nivel`, em que classificaremos um valor em: `alto` se `NA_sales > mean(NA_sales)`; `baixo` se `NA_sales < mean(NA_sales)` ou `razoavel` nos demais casos:
 
-```{r}
-transmute(tb_ibama2,
-       nivel_preco =
+```{r, eval=FALSE}
+transmute(tb_game_sales,
+       nivel_na =
          case_when(
-           preco_unidade > 500 ~ "alto",
-           preco_unidade < 300 ~ "baixo",
+           NA_sales > mean(NA_Sales) ~ "alto",
+           NA_sales < mean(NA_Sales) ~ "baixo",
            TRUE ~ "razoável"
          ))
 ```
 
-**DICA:** Se os valores das colunas recém criadas forem exibidos em notação exponencial (científica), execute o código abaixo para forçar a exibição das casas decimais em modo convencional e depois imprima novamente as colunas.
+<!-- **DICA:** Se os valores das colunas recém criadas forem exibidos em notação exponencial (científica), execute o código abaixo para forçar a exibição das casas decimais em modo convencional e depois imprima novamente as colunas. -->
 
-```{r, eval=FALSE}
-# scipen é uma espécie de penalização para a utilização de notação em valores exponenciais
-# valores positivos penalizam a exibição em notação exponencial
-# valores negativos penalizam a exibição em notação fixa/regular
-options(scipen=999)
-```
+<!-- ```{r, eval=FALSE} -->
+<!-- # scipen é uma espécie de penalização para a utilização de notação em valores exponenciais -->
+<!-- # valores positivos penalizam a exibição em notação exponencial -->
+<!-- # valores negativos penalizam a exibição em notação fixa/regular -->
+<!-- options(scipen=999) -->
+<!-- ``` -->
 
 ### Sumarizando valores com `summarise()`
 
 O último "verbo" de `dplyr` é `summarise()` (ou `summarize`). Ele colapsa um tibble/dataframe em uma única linha.
 
 ```{r}
-summarise(tb_ibama2,
-  preco_total_medio = mean(PRECO_TOTAL, na.rm = TRUE)
+summarise(tb_game_sales,
+  max_venda_na = max(NA_Sales, na.rm = TRUE)
 )
 ```
 
-**DICA:** O parâmetro `na.rm = TRUE` dentro da função `mean()` serve para que esta desconsidere os valores falatantes (`NA`) ao calcular a média. Do contrário, na existência de _missing values_ `NA`, a função sempre retornará `NA`. Isso também vale para outras funções matemáticas de funcionamento vetorizado, como `sum()`, por exemplo.
+**DICA:** O parâmetro `na.rm = TRUE` dentro da função `max()` serve para que esta desconsidere os valores falatantes (`NA`) ao calcular a máximo Do contrário, na existência de _missing values_ `NA`, a função sempre retornará `NA`. Isso também vale para outras funções matemáticas de funcionamento vetorizado, como `sum()`, `mean` e `min`, por exemplo.
 
-Dependendo do seu objetivo, pode ser mais útil utilizar o "verbo" `group_by()` que veremos mais a frente. Com ele poderemos calcular o preço médio por categoria, i.e. por Estado, Município, etc.
+Dependendo do seu objetivo, pode ser mais útil utilizar o "verbo" `group_by()` que veremos mais a frente. Com ele poderemos calcular o valor médio por plataforma por exemplo.
 
 
 ## Estrutura do `dplyr`
@@ -226,14 +308,14 @@ O uso de agrupamento afeta o resultado dos verbos principais da seguinte forma:
 
 - `summarise()` calcula o sumário para cada grupo.
 
-No exemplo a seguir, nós separamos o dataset por `PRODUTO`, contando o número de registros para cada um dos produtos (`count = n()`), computando a preço médio por produto (`preco_medio_produto = mean(preco_unidade, na.rm = TRUE`)).
+No exemplo a seguir, nós separamos o dataset por `Platform`, contando o número de registros para cada um das plataformas (`count = n()`), computando a valor médio por plataforma (`valor_medio_plataforma = mean(Global_Sales, na.rm = TRUE`)).
 
 ```{r}
-by_produto <- group_by(tb_ibama2, PRODUTO)
-preco_medio_produto <- summarise(
-  by_produto,
+by_platform <- group_by(tb_game_sales, Platform)
+valor_medio_plataforma <- summarise(
+  by_platform,
   count = n(),
-  pmp = mean(preco_unidade, na.rm = TRUE)
+  mvp = mean(Global_Sales, na.rm = TRUE)
 )
 ```
 
@@ -244,26 +326,6 @@ Note que `summarise()` é normalmente utilizada com **aggregate functions**, as 
 - `n_distinct(x)`: número de valores únicos em x;
 - `first(x)`, `last(x)` e `nth(x, n)` funcionam de forma similar a `x[1]`, `x[length(x)]` e `x[n]`, mas nos dão maior controle sobre resultado caso algum valor seja _missing_.
 
-Veja um exemplo em que usamos estas funções para encontrar o número de produtos distintos que seguem para cada possível destino e quantidade total de produtos que o Município recebe:
-
-```{r}
-destinos <- group_by(tb_ibama2, MUNICÍPIO_DESTINATÁRIO)
-summarise(destinos,
-  n_produtos_distintos = n_distinct(PRODUTO),
-  qte_total_produtos = n()
-)
-```
-
-Quando agrupamos mais de uma variável, cada `summarise()` que executamos, elimina um nível do agrupamento.
-
-Exemplo:
-
-```{r}
-by_uf_mun_dest <- group_by(tb_ibama2, UF_DESTINATÁRIO, MUNICÍPIO_DESTINATÁRIO)
-(qte_produtos_por_mun_dest   <- summarise(by_uf_mun_dest, qte = n()))
-# notar que da descrição "Groups:" do tibble, ou seja, o número de variáveis de agrupamento vai diminuindo.
-(qte_produtos_por_uf_dest   <- summarise(qte_produtos_por_mun_dest, qte = sum(qte)))
-```
 
 <!-- ISSO SE CHAMA PROGRSSIVELY ROLLING UP SUMMARIES IN A DATA FRAME -->
 
@@ -277,73 +339,30 @@ Uma das melhores características do pacote `dplyr` é que podemos nos referir a
 Veja formas equivalentes do ponto de vista de **dplyr**:
 
 ```{r}
-select(tb_ibama2, TIPO_GF)
-select(tb_ibama2, 1)
+select(tb_chess_game, victory_status)
+select(tb_chess_game, 6)
 ```
 
 Se houver uma variável no _Global Environment_ com o mesmo nome de uma coluna de nosso tibble/dataframe, o `dplyr` dará prioridade à variável que está no _tibble_.
 
 ```{r}
-TIPO_GF <- 5
-select(tb_ibama2, TIPO_GF)
+victory_status <- "Vencedor"
+select(tb_chess_game, victory_status)
 ```
 
-Esse comportamento somente se aplica aos nomes "crus" e às chamadas de seleção como `select(tibble, var1, var2, var3)` ou `var1:var3`. Em todos os outros casos, os nomes das colunas dos tibbles são preteridas às "variáveis soltas" no _Global Environment_.
-
-```{r}
-var1 <- "UF"
-select(tb_ibama2, starts_with(var1))
-```
-
-Note que neste útlimo caso, o `dplyr` olhou para o conteúdo da variável `var1` e não para o nome literal da variável.
 
 ## Usando o Pipe `%>%`
 
-**dplyr** é funcional no sentido de que os chamados às funções não tem efeitos colaterais. Ou seja, você sempre precisa salvar seus resultados. Isso faz com que não tenhámos um código tão elegante, especialmente quando vamos fazer várias operações, uma de cada vez:
+**dplyr** é funcional no sentido de que os chamados às funções não tem efeitos colaterais. Ou seja, você sempre precisa salvar seus resultados. Isso faz com que não tenhámos um código tão elegante, especialmente quando vamos fazer várias operações.
 
-```{r, eval=FALSE}
-# agrupando por UF_DESTINATÁRIO, MUNICÍPIO_DESTINATÁRIO
-nivel1 <- group_by(tb_ibama2, UF_DESTINATÁRIO, MUNICÍPIO_DESTINATÁRIO)
-# selecionando apenas colunas PRODUTO, PRECO_TOTAL, preco_unidade
-nivel2 <- select(nivel1, PRODUTO, PRECO_TOTAL, preco_unidade)
-# calculando quantidade total de produtos e valor total por MUNICÍPIO_DESTINATÁRIO
-nivel3 <- summarise(nivel2,
-  qte_total_produtos = n(),
-  valor_total = sum(PRECO_TOTAL, na.rm = TRUE)
-)
-# filtrando Municípios com quantidade de produtos acima de 100 OU
-# ... valor total acima de R$ 2.000.000,00
-nivel4 <- filter(nivel3, qte_total_produtos > 100 | valor_total > 2000000)
-```
-
-
-Note que há muitos resultados intermediários que vamos salvando, quando na verdade só nos interessaria o final. Para resolver isso poderíamos ir chamando uma função dentro da outra:
-
-```{r, eval=FALSE}
-filter(
-  summarise(
-    select(
-      group_by(tb_ibama2, UF_DESTINATÁRIO, MUNICÍPIO_DESTINATÁRIO),
-      PRODUTO, PRECO_TOTAL, preco_unidade
-    ),
-    qte_total_produtos = n(),
-    valor_total = sum(PRECO_TOTAL, na.rm = TRUE)
-  ),
-  qte_total_produtos > 100 | valor_total > 2000000
-)
-```
-
-Embora resolva o problema de salvar os objetos intermediários, esta abordagem é difícil de se ler os passos porque a ordem das operações se dá dentro para fora. Então, os argumentos acabam ficando longe da função propriamente dita. Para dar uma solução elegante ao problema, **dplyr** utiliza o operador pipe `%>%` do pacote `magritrr`. `x %>% f(y)` equivale a `f(x, y)`. Então, podemos utilizar esse operador para reescrever múltiplas operações que podemos ler da esquerda para direita e de cima para baixo. É como se cada linha de código funcionasse como um departamento destinto de uma empresa. A produção começa na primeira linha. Terminada as alterações nesse primeiro departamento, o produto (dados) ainda inacabado é "jogado" para o departamento de baixo por meio do _pipe_, onde a produção continua. De lá segue para o próximo de partamento, e assim segue até que todas as alterações nos dados tenham sido realizadas.
+Para dar uma solução elegante ao problema, **dplyr** utiliza o operador pipe `%>%` do pacote `magritrr`. `x %>% f(y)` equivale a `f(x, y)`. Então, podemos utilizar esse operador para reescrever múltiplas operações que podemos ler da esquerda para direita e de cima para baixo. 
 
 ```{r}
-tb_ibama2 %>%
-  group_by(UF_DESTINATÁRIO, MUNICÍPIO_DESTINATÁRIO) %>%
-  select(PRODUTO, PRECO_TOTAL, preco_unidade) %>%
-  summarise(
-    qte_total_produtos = n(),
-    valor_total = sum(PRECO_TOTAL, na.rm = TRUE)
-  ) %>%
-  filter(qte_total_produtos > 100 | valor_total > 2000000)
+tb_game_sales %>% 
+  group_by(Platform) %>% 
+  summarise(count = n(),
+  mvp = mean(Global_Sales, na.rm = TRUE))
+
 ```
 
 **DICA:** Note que o nome do _tibble_ ou dataframe só precisa ser informado uma única vez logo ao início do processo.
