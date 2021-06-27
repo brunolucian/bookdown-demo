@@ -1,5 +1,10 @@
 # Módulo V  {#m5}
 
+Script da aula do Módulo V abaixo.
+```{r, echo=FALSE}
+xfun::embed_file('scripts/aula5.R')
+```
+
 ## Gráficos com `ggplot2`
 
 <!-- #USAR DADOS DELES (ibama OU DO CENSO ESCOLAR) -->
