@@ -8,7 +8,7 @@ xfun::embed_file('scripts/aula4.R')
 
 ## Manipulação de dados com `dplyr`
 
-Nesta seção, trataremos do pacote `dplyr`, que é um dos pacotes mais importantes da coleção _tidyverse_. Ele traz uma "gramática" específica de manipulação de dados, provendo um conjunto de funções que ajudam a resolver os desafios mais comuns na manipulação de dados. O objetivo é que você se familiarize com as funções do pacote `dplyr`; com as tarefas que elas executam; e veja exemplos de como aplicá-las a *data.frames*.
+Esta seção, trataremos do pacote `dplyr`, que é um dos pacotes mais importantes da coleção _tidyverse_. Ele traz uma "gramática" específica de manipulação de dados, provendo um conjunto de funções que ajudam a resolver os desafios mais comuns na manipulação de dados. O objetivo é que você se familiarize com as funções do pacote `dplyr`; com as tarefas que elas executam; e veja exemplos de como aplicá-las a *data.frames*.
 
 <!-- Além das funções básicas de **dplyr**, teremos um enfoque na utilização do pacote **dplyr** para trabalhar com bancos de dados relacionais **SQL** em conjunto com os pacotes **DBI** e **dbplyr**. -->
 
