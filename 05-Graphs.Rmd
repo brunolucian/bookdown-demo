@@ -7,8 +7,6 @@ xfun::embed_file('scripts/aula5.R')
 
 ## Gráficos com `ggplot2`
 
-<!-- #USAR DADOS DELES (ibama OU DO CENSO ESCOLAR) -->
-
 <!-- # SCATTER/POINT, COL, BAR(HIST), LINE, BARRAS JUSTAPOSTAS -->
 <!-- # COMECAR PELOSN GEOMS E IR alterando aesthetics.. -->
 <!-- # alterações de legendas e themes -->
